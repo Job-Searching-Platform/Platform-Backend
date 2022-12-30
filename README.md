@@ -126,9 +126,7 @@ Don't forget to give the project a star! Thanks again!
 
 ## Contact
 
-Your Name - [@Abdullah1Nazari](https://twitter.com/Abdullah1Nazari) - abdullahnazari2001@gmail.com
-
-Github: [AboNazari](https://github.com/AboNazari)
+Github: [Abbosjon](https://github.com/AlgoAIBoss)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

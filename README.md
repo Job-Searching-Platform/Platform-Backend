@@ -7,10 +7,10 @@
     <img src="./src/assets/images/logo.png" alt="Logo" width="80" height="80">
   </a>
 
-  <h3 align="center">YellowSpace Magazine</h3>
+  <h3 align="center">Job Searching Platform</h3>
 
   <p align="center">
-    The University of Central Asia Student Magazine
+    The University of Central Asia FYP by a student
     <br />
     <a href="https://yellowspace.netlify.app/"><strong>Visit the Website > </strong></a>
     <br />

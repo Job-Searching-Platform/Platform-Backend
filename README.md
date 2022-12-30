@@ -47,7 +47,7 @@
 
 ## About The Project
 
-YellowSpace is Student magazine of the University of Central Asia , where you can access the students art work, researches, news and more.
+job searching platform is a FYP of the University of Central Asia , where you can access jobs and more.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

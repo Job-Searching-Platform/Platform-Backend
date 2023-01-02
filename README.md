@@ -7,10 +7,10 @@
     <img src="./src/assets/images/logo.png" alt="Logo" width="80" height="80">
   </a>
 
-  <h3 align="center">YellowSpace Magazine</h3>
+  <h3 align="center">Job Searching Platform</h3>
 
   <p align="center">
-    The University of Central Asia Student Magazine
+    The University of Central Asia FYP by a student
     <br />
     <a href="https://yellowspace.netlify.app/"><strong>Visit the Website > </strong></a>
     <br />
@@ -47,7 +47,7 @@
 
 ## About The Project
 
-YellowSpace is Student magazine of the University of Central Asia , where you can access the students art work, researches, news and more.
+job searching platform is a FYP of the University of Central Asia , where you can access jobs and more.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -126,9 +126,7 @@ Don't forget to give the project a star! Thanks again!
 
 ## Contact
 
-Your Name - [@Abdullah1Nazari](https://twitter.com/Abdullah1Nazari) - abdullahnazari2001@gmail.com
-
-Github: [AboNazari](https://github.com/AboNazari)
+Github: [Abbosjon](https://github.com/AlgoAIBoss)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

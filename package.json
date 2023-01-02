@@ -1,0 +1,41 @@
+{
+  "name": "platform-backend",
+  "version": "1.0.0",
+  "description": "backend api packages",
+  "main": "app.js",
+  "scripts": {
+    "start": "node ./src/server.js",
+    "dev": "nodemon ./src/server.js",
+    "start:prod": "NODE_ENV=production nodemon ./src/server.js",
+    "debug": "ndb ./src/server.js",
+    "watch:js": "parcel watch ./public/js/index.js --out-dir ./public/js --out-file bundle.js",
+    "build:js": "parcel build ./public/js/index.js --out-dir ./public/js --out-file bundle.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Job-Searching-Platform/Platform-Backend.git"
+  },
+  "keywords": [],
+  "author": "Abbosjon Madiev",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Job-Searching-Platform/Platform-Backend/issues"
+  },
+  "homepage": "https://github.com/Job-Searching-Platform/Platform-Backend#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "compression": "^1.7.4",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "mongoose": "^6.8.2",
+    "swagger-ui-express": "^4.6.0",
+    "validator": "^13.7.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
+}

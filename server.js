@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require("mongoose").set("strictQuery", false);
 const dotenv = require("dotenv"); 
 const path = require("path");
 const app = require("./app");
@@ -10,7 +10,7 @@ process.on("uncaughtException", (err) => {
     process.exit(1);
 })
 
-dotenv.config({ path: path.resolve(__dirname, "../config.env") });
+dotenv.config({ path: path.resolve(__dirname, "./config.env") });
 
 
 const port = process.env.PORT || 8000;

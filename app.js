@@ -11,7 +11,7 @@ const swaggerDocument = require("./swagger.json");
 const AppError = require("./utils/appError");
 const globalErrorHandler = require("./controllers/errorController");
 
-
+const userRouter = require('./routes/userRoutes');
 
 // 1) INIT FUNCTIONS
 const app = express();
@@ -44,7 +44,7 @@ app.use(compression());
 
 
 // 3) ROUTES
-// app.use("/admin", adminRouter);
+app.use('/api/v1/users', userRouter);
 
 
 

@@ -5,25 +5,16 @@ const bcrypt = require("bcryptjs");
 
 const userSchema = new mongoose.Schema(
   {
-    firstName: {
+    fullName: {
       type: String,
       required: [true, "Please tell us your name!"],
     },
-    lastName: {
-        type: String,
-        required: [true, "Please tell us your name!"],
-      },
     email: {
       type: String,
       required: [true, "Please provide your email"],
       unique: true,
       lowercase: true,
       validate: [validator.isEmail, "Please provide a valid email"],
-    },
-    role: {
-      type: String,
-      enum: ["user", "guide", "lead-guide", "admin"],
-      default: "user",
     },
     password: {
       type: String,
@@ -108,6 +99,6 @@ userSchema.methods.createPasswordResetToken = function () {
   return resetToken;
 };
 
-const User = mongoose.model("User", userSchema, "Admin");
+const User = mongoose.model("User", userSchema, "userAdmin");
 
 module.exports = User;

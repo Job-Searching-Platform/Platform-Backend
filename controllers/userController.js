@@ -5,7 +5,9 @@ const factory = require('./controlMiddleware');
 
 
 
-
+// ###############################
+//     Middleware
+// ###############################
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
   Object.keys(obj).forEach(el => {
@@ -14,11 +16,21 @@ const filterObj = (obj, ...allowedFields) => {
   return newObj;
 };
 
+
+// ###############################
+//     Middleware
+// ###############################
 exports.getMe = (req, res, next) => {
   req.params.id = req.user.id;
   next();
 };
 
+
+
+
+// ###############################
+//     Middleware
+// ###############################
 exports.updateMe = catchAsync(async (req, res, next) => {
   // 1) Create error if user POSTs password data
   if (req.body.password || req.body.passwordConfirm) {
@@ -48,6 +60,12 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   });
 });
 
+
+
+
+// ###############################
+//     Middleware
+// ###############################
 exports.deleteMe = catchAsync(async (req, res, next) => {
   await User.findByIdAndUpdate(req.user.id, { active: false });
 
@@ -57,12 +75,19 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
   });
 });
 
+
+
+// ###############################
+//     Middleware
+// ###############################
 exports.createUser = (req, res) => {
   res.status(500).json({
     status: 'error',
     message: 'This route is not defined! Please use /signup instead'
   });
 };
+
+
 
 exports.getUser = factory.getOne(User);
 exports.getAllUsers = factory.getAll(User);

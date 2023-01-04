@@ -13,36 +13,47 @@ const userProfileSchema = new mongoose.Schema({
       phoneNumber:Number,
     },
   ],
-  photo: String,
-  achievements: Number,
-  bio: String,
-  socialProfile: [
+  socialLinks: [
     {
       website: String,
       linkedin: String,
       github: String,
     },
   ],
-  experience: [
-    {
-      company: String,
-      title: String,
-      startDate: Date,
-      endDate: Date,
-      description: String,
-      tags: [String],
-    },
-  ],
+  photo: String,
+  achievement: String,
+  bio: String,
+  skills:[String],
+  opentoRoles:[String],
+  primaryRole:String,
+  yearofExperience:Number,
+  resume:String,
+
 });
 
-userProfileSchema.pre(/^find/, function (next) {
-  this.populate("user").populate({
-    path: "tour",
-    select: "name",
-  });
-  next();
+
+// Virtual populate
+userProfileSchema.virtual('education', {
+  ref: 'userEducation',
+  foreignField: 'profile',
+  localField: '_id'
 });
 
-const Profile = mongoose.model("Profile", userProfileSchema);
+// Virtual populate
+userProfileSchema.virtual('experience', {
+  ref: 'userExperience',
+  foreignField: 'profile',
+  localField: '_id'
+});
+
+// userProfileSchema.pre(/^find/, function (next) {
+//   this.populate("user").populate({
+//     path: "tour",
+//     select: "name",
+//   });
+//   next();
+// });
+
+const Profile = mongoose.model("Profile", userProfileSchema, "userProfile");
 
 module.exports = Profile;

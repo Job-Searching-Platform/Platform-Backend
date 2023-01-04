@@ -44,6 +44,15 @@ const userSchema = new mongoose.Schema(
   { versionKey: false }
 );
 
+
+// Virtual populate
+userSchema.virtual('profile', {
+  ref: 'userProfile',
+  foreignField: 'user',
+  localField: '_id'
+});
+
+
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
     return next();

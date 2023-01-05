@@ -1,7 +1,7 @@
-const User = require('./../models/user/userModel');
-const userEducation = require('../models/user/userEducationModel');
-const userExperience = require('./../models/user/userExperienceModel');
-const userProfile = require('./../models/user/userProfileModel');
+const Recruiter = require('./../models/recruiter/recruiterModel');
+const recruiterEducation = require('../models/recruiter/recruiterEducationModel');
+const recruiterExperience = require('./../models/recruiter/recruiterExperienceModel');
+const recruiterProfile = require('./../models/recruiter/recruiterProfileModel');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
 const factory = require('./controlMiddleware');
@@ -25,47 +25,47 @@ const filterObj = (obj, ...allowedFields) => {
 
 
 // ###############################
-//     User Name
+//     Recruiter Name
 // ###############################
-exports.getUser = factory.getOne(User, "profile");
-exports.updateUser = factory.updateOne(User);
-
-
-// ###############################
-//      User Profile
-// ###############################
-exports.getUserProfile = factory.getOne(userProfile, ["education", "experience"]);
-exports.createUserProfile = factory.createOne(userProfile);
-exports.updateUserProfile = factory.updateOne(userProfile);
-exports.deleteUserProfile = factory.deleteOne(userProfile);
+exports.getRecruiter = factory.getOne(Recruiter, "profile");
+exports.updateRecruiter = factory.updateOne(Recruiter);
 
 
 // ###############################
-//     User Experience
+//      Recruiter Profile
 // ###############################
-exports.getUserExperience = factory.getOne(userExperience);
-exports.createUserExperience = factory.createOne(userExperience);
-exports.updateUserExperience = factory.updateOne(userExperience);
-exports.deleteUserExperience = factory.deleteOne(userExperience);
-
-
-// ###############################
-//     User Education
-// ###############################
-exports.getUserEducation = factory.getOne(userEducation);
-exports.createUserEducation = factory.createOne(userEducation);
-exports.updateUserEducation = factory.updateOne(userEducation);
-exports.deleteUserEducation = factory.deleteOne(userEducation);
-
-
-
+exports.getRecruiterProfile = factory.getOne(recruiterProfile, ["education", "experience"]);
+exports.createRecruiterProfile = factory.createOne(recruiterProfile);
+exports.updateRecruiterProfile = factory.updateOne(recruiterProfile);
+exports.deleteRecruiterProfile = factory.deleteOne(recruiterProfile);
 
 
 // ###############################
-//     Delete user account
+//     Recruiter Experience
+// ###############################
+exports.getRecruiterExperience = factory.getOne(recruiterExperience);
+exports.createRecruiterExperience = factory.createOne(recruiterExperience);
+exports.updateRecruiterExperience = factory.updateOne(recruiterExperience);
+exports.deleteRecruiterExperience = factory.deleteOne(recruiterExperience);
+
+
+// ###############################
+//     Recruiter Education
+// ###############################
+exports.getRecruiterEducation = factory.getOne(recruiterEducation);
+exports.createRecruiterEducation = factory.createOne(recruiterEducation);
+exports.updateRecruiterEducation = factory.updateOne(recruiterEducation);
+exports.deleteRecruiterEducation = factory.deleteOne(recruiterEducation);
+
+
+
+
+
+// ###############################
+//     Delete recruiter account
 // ###############################
 exports.deleteMe = catchAsync(async (req, res, next) => {
-  await User.findByIdAndUpdate(req.user.id, { active: false });
+  await Recruiter.findByIdAndUpdate(req.recruiter.id, { active: false });
 
   res.status(204).json({
     status: 'success',
@@ -140,6 +140,6 @@ exports.resume_upload = catchAsync(async (req, res, next) => {
 //     Middleware
 // ###############################
 // exports.getMe = (req, res, next) => {
-//   req.params.id = req.user.id;
+//   req.params.id = req.recruiter.id;
 //   next();
 // };

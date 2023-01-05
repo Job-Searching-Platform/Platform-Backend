@@ -12,6 +12,7 @@ const AppError = require("./utils/appError");
 const globalErrorHandler = require("./controllers/errorController");
 
 const userRouter = require('./routes/userRoutes');
+const recruiterRoutes = require('./routes/recruiterRoutes');
 
 // 1) INIT FUNCTIONS
 const app = express();
@@ -45,6 +46,7 @@ app.use(compression());
 
 // 3) ROUTES
 app.use('/api/v1/users', userRouter);
+app.use('/api/v1/recruiters', recruiterRoutes);
 
 
 

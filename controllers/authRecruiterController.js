@@ -53,8 +53,8 @@ exports.signup = catchAsync(async (req, res, next) => {
     passwordConfirm: req.body.passwordConfirm,
   });
 
-  const url = `${req.protocol}://${req.get("host")}/me`;
-  await new Email(newRecruiter, url).sendWelcome();
+  // const url = `${req.protocol}://${req.get("host")}/me`;
+  // await new Email(newRecruiter, url).sendWelcome();
 
   createSendToken(newRecruiter, 201, req, res);
 });

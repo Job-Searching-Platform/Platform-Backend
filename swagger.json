@@ -2,7 +2,7 @@
     "swagger": "2.0",
     "info": {
       "version": "1.0.0",
-      "title": "Yellow-Space API Documentation",
+      "title": "Job-Searching-Platform API Documentation",
       "description": "This documentation contains four mains routes with CRUD operations: Admin, Announcements, Story, Video",
       "license": {
         "name": "MIT",
@@ -10,7 +10,7 @@
       }
     },
     "apis": ["src/routes/*.js"],
-    "host": "aqueous-hamlet-18408.herokuapp.com",
+    "host": "https://fyp-backend-api.herokuapp.com",
     "basePath": "/",
     "tags": [
       {

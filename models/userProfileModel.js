@@ -29,19 +29,25 @@ const userProfileSchema = new mongoose.Schema({
   yearofExperience:Number,
   resume:String,
 
-});
+},
+{
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true }
+},
+{ versionKey: false }
+);
 
 
 // Virtual populate
 userProfileSchema.virtual('education', {
-  ref: 'userEducation',
+  ref: 'Education',
   foreignField: 'profile',
   localField: '_id'
 });
 
 // Virtual populate
 userProfileSchema.virtual('experience', {
-  ref: 'userExperience',
+  ref: 'Experience',
   foreignField: 'profile',
   localField: '_id'
 });

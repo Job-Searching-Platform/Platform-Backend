@@ -11,7 +11,10 @@ const userEducationSchema = new mongoose.Schema({
   degree: String,
   major: [String],
   GPA: String,
-});
+},
+{ versionKey: false }
+);
+
 
 const Education = mongoose.model("Education", userEducationSchema, "userEducation");
 

@@ -1,40 +1,58 @@
-const express = require('express');
-const userController = require('./../controllers/userController');
-const authController = require('./../controllers/authController');
+const express = require("express");
+const userController = require("./../controllers/userController");
+const authController = require("./../controllers/authController");
 
 const router = express.Router();
 
-router.post('/signup', authController.signup);
-router.post('/login', authController.login);
-router.get('/logout', authController.logout);
+// #############################
+//     Authentication
+// #############################
+router.post("/signup", authController.signup);
+router.post("/login", authController.login);
+router.get("/logout", authController.logout);
+router.post("/forgotPassword", authController.forgotPassword);
+router.patch("/resetPassword/:token", authController.resetPassword);
 
-router.post('/forgotPassword', authController.forgotPassword);
-router.patch('/resetPassword/:token', authController.resetPassword);
+// #############################
+//    User Account Info
+// #############################
+router.use(authController.protect); // Protect all routes after this middleware
 
-// Protect all routes after this middleware
-router.use(authController.protect);
+router.patch("/updateMyPassword", authController.updatePassword);
 
-router.patch('/updateMyPassword', authController.updatePassword);
-router.get('/me', userController.getMe, userController.getUser);
-router.patch(
-  '/updateMe',
-  // userController.uploadUserPhoto,
-  // userController.resizeUserPhoto,
-  userController.updateMe
-);
-router.delete('/deleteMe', userController.deleteMe);
+// #########     User Name     #################
+router
+  .route("/me/:id")
+  .get(userController.getUser)
+  .patch(userController.updateUser);
+router.delete("/deleteMe", userController.deleteMe);
 
-// router.use(authController.restrictTo('admin'));
+// #########     User Profile     #################
+router
+  .route("/myProfile/:id")
+  .get(userController.getUserProfile)
+  .patch(userController.updateUserProfile)
+  .delete(userController.deleteUserProfile);
+router.post("/myProfile", userController.createUserProfile);
 
-// router
-//   .route('/')
-//   .get(userController.getAllUsers)
-//   .post(userController.createUser);
+// #########     User Experience     #################
+router
+  .route("/myExperience/:id")
+  .get(userController.getUserExperience)
+  .patch(userController.updateUserExperience)
+  .delete(userController.deleteUserExperience);
+router.post("/myExperience", userController.createUserExperience);
 
-// router
-//   .route('/:id')
-//   .get(userController.getUser)
-//   .patch(userController.updateUser)
-//   .delete(userController.deleteUser);
+// #########     User Education     #################
+router
+  .route("/myEducation/:id")
+  .get(userController.getUserEducation)
+  .patch(userController.updateUserEducation)
+  .delete(userController.deleteUserEducation);
+router.post("/myEducation", userController.createUserEducation);
+
+// #########     User Media & Resume     #################
+router.get("/resumeUpload", userController.resume_upload);
+router.get("/mediaUpload", userController.media_upload);
 
 module.exports = router;

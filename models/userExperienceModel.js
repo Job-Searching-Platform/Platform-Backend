@@ -12,7 +12,9 @@ const userExperienceSchema = new mongoose.Schema({
   endDate: Date,
   description: String,
   tags: [String],
-});
+},
+{ versionKey: false }
+);
 
 
 const Experience = mongoose.model("Experience", userExperienceSchema, "userExperience");

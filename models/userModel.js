@@ -41,13 +41,17 @@ const userSchema = new mongoose.Schema(
       select: false,
     },
   },
+  {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }
+  },
   { versionKey: false }
 );
 
 
 // Virtual populate
 userSchema.virtual('profile', {
-  ref: 'userProfile',
+  ref: 'Profile',
   foreignField: 'user',
   localField: '_id'
 });

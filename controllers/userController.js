@@ -1,8 +1,12 @@
 const User = require('./../models/userModel');
+const userEducation = require('./../models/userEducationModel');
+const userExperience = require('./../models/userExperienceModel');
+const userProfile = require('./../models/userProfileModel');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
 const factory = require('./controlMiddleware');
-
+const AWS = require("aws-sdk");
+const uuid = require("uuid").v4;
 
 
 // ###############################
@@ -17,54 +21,48 @@ const filterObj = (obj, ...allowedFields) => {
 };
 
 
-// ###############################
-//     Middleware
-// ###############################
-exports.getMe = (req, res, next) => {
-  req.params.id = req.user.id;
-  next();
-};
-
 
 
 
 // ###############################
-//     Middleware
+//     User Name
 // ###############################
-exports.updateMe = catchAsync(async (req, res, next) => {
-  // 1) Create error if user POSTs password data
-  if (req.body.password || req.body.passwordConfirm) {
-    return next(
-      new AppError(
-        'This route is not for password updates. Please use /updateMyPassword.',
-        400
-      )
-    );
-  }
+exports.getUser = factory.getOne(User, "profile");
+exports.updateUser = factory.updateOne(User);
 
-  // 2) Filtered out unwanted fields names that are not allowed to be updated
-  const filteredBody = filterObj(req.body, 'name', 'email');
-  if (req.file) filteredBody.photo = req.file.filename;
 
-  // 3) Update user document
-  const updatedUser = await User.findByIdAndUpdate(req.user.id, filteredBody, {
-    new: true,
-    runValidators: true
-  });
+// ###############################
+//      User Profile
+// ###############################
+exports.getUserProfile = factory.getOne(userProfile, ["education", "experience"]);
+exports.createUserProfile = factory.createOne(userProfile);
+exports.updateUserProfile = factory.updateOne(userProfile);
+exports.deleteUserProfile = factory.deleteOne(userProfile);
 
-  res.status(200).json({
-    status: 'success',
-    data: {
-      user: updatedUser
-    }
-  });
-});
+
+// ###############################
+//     User Experience
+// ###############################
+exports.getUserExperience = factory.getOne(userExperience);
+exports.createUserExperience = factory.createOne(userExperience);
+exports.updateUserExperience = factory.updateOne(userExperience);
+exports.deleteUserExperience = factory.deleteOne(userExperience);
+
+
+// ###############################
+//     User Education
+// ###############################
+exports.getUserEducation = factory.getOne(userEducation);
+exports.createUserEducation = factory.createOne(userEducation);
+exports.updateUserEducation = factory.updateOne(userEducation);
+exports.deleteUserEducation = factory.deleteOne(userEducation);
+
 
 
 
 
 // ###############################
-//     Middleware
+//     Delete user account
 // ###############################
 exports.deleteMe = catchAsync(async (req, res, next) => {
   await User.findByIdAndUpdate(req.user.id, { active: false });
@@ -78,20 +76,70 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
 
 
 // ###############################
+//     AWS for Media upload
+// ###############################
+exports.media_upload = catchAsync(async (req, res, next) => {
+  const accessKeyId = `${process.env.AccessKeyID}`;
+  const secretAccessKey = `${process.env.SecretAccessKey}`;
+
+  const s3 = new AWS.S3({
+    accessKeyId,
+    secretAccessKey,
+    region: "ap-south-1",
+    apiVersion: "2010-12-01",
+    signatureVersion: "v4",
+  });
+
+  const key = `${req.cookies.jwt.substr(1, 13)}/${uuid()}.jpeg`;
+  s3.getSignedUrl(
+    "putObject",
+    {
+      Bucket: "my-blog-bucket-closest-1029",
+      ContentType: "image/jpeg",
+      Key: key,
+      Expires: 1000,
+    },
+    (err, url) => res.send({ key, url })
+  );
+});
+
+
+
+// ###############################
+//     AWS for Resume upload
+// ###############################
+exports.resume_upload = catchAsync(async (req, res, next) => {
+  const accessKeyId = `${process.env.AccessKeyID}`;
+  const secretAccessKey = `${process.env.SecretAccessKey}`;
+
+  const s3 = new AWS.S3({
+    accessKeyId,
+    secretAccessKey,
+    region: "ap-south-1",
+    apiVersion: "2010-12-01",
+    signatureVersion: "v4",
+  });
+
+  const key = `${req.cookies.jwt.substr(1, 13)}/${uuid()}.pdf`;
+  s3.getSignedUrl(
+    "putObject",
+    {
+      Bucket: "my-blog-bucket-closest-1029",
+      ContentType: "application/pdf",
+      Key: key,
+      Expires: 1000,
+    },
+    (err, url) => res.send({ key, url })
+  );
+});
+
+
+
+
+// ###############################
 //     Middleware
 // ###############################
-exports.createUser = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'This route is not defined! Please use /signup instead'
-  });
-};
-
-
-
-exports.getUser = factory.getOne(User);
-exports.getAllUsers = factory.getAll(User);
-
-// Do NOT update passwords with this!
-exports.updateUser = factory.updateOne(User);
-exports.deleteUser = factory.deleteOne(User);
+// exports.getMe = (req, res, next) => {
+//   req.params.id = req.user.id;
+//   next();
+// };

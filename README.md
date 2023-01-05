@@ -12,11 +12,11 @@
   <p align="center">
     The University of Central Asia FYP by a student
     <br />
-    <a href="https://yellowspace.netlify.app/"><strong>Visit the Website > </strong></a>
+    <a href="https://final-year-project-job.netlify.app/"><strong>Visit the Website > </strong></a>
     <br />
     <br />
     ·
-    <a href="https://github.com/YellowSpace-Magazine/Frontend-React-APP/issues">Report Bug</a>
+    <a href="https://app.getpostman.com/join-team?invite_code=1d7615ad93f3ff87b1aa9d5f767619b0&target_code=5a53ed8545bf703213d71e9f28dce5de">Postman API Docs</a>
   </p>
 </div>
 

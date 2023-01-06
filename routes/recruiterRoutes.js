@@ -12,7 +12,8 @@ router.post("/login", authRecruiterController.login);
 router.get("/logout", authRecruiterController.logout);
 router.post("/forgotPassword", authRecruiterController.forgotPassword);
 router.patch("/resetPassword/:token", authRecruiterController.resetPassword);
-
+router.post('/google-login', authController.googleLogin);
+router.post('/facebook-login', authController.facebookLogin);
 // #############################
 //    Recruiter Account Info
 // #############################

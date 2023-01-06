@@ -7,10 +7,7 @@ const companySchema = new mongoose.Schema(
     descriptionText: String,
     founder: [String],
     industry: [String],
-    postedDate: {
-      type: Date,
-      default: Date.now(),
-    },
+    openedDate: Date,
     address: [
       {
         country: [String],
@@ -26,14 +23,9 @@ const companySchema = new mongoose.Schema(
       },
     ],
     companySize:Number,
-    jobType: String,
-    Remote: String,
-    experience: String,
     skills: [String],
-    salaries: [Number],
-    candidateQuantity: Number,
-    candidateLevels: [String],
-    photos: [String],
+    gallery: [String],
+    photo:String,
     companyValue:Number,
   },
   { versionKey: false }

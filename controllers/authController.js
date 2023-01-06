@@ -1,13 +1,12 @@
 const crypto = require("crypto");
 const { promisify } = require("util");
 const jwt = require("jsonwebtoken");
+const { OAuth2Client } = require("google-auth-library");
 const User = require("./../models/user/userModel");
 const catchAsync = require("./../utils/catchAsync");
 const AppError = require("./../utils/appError");
 const Email = require("./../utils/email");
-
-
-
+const axios = require("axios");
 
 // ##########################
 //        JWT creators
@@ -38,9 +37,6 @@ const createSendToken = (user, statusCode, req, res) => {
   });
 };
 
-
-
-
 // ##########################
 //        Sign Up
 // ##########################
@@ -58,8 +54,6 @@ exports.signup = catchAsync(async (req, res, next) => {
 
   createSendToken(newUser, 201, req, res);
 });
-
-
 
 // ##########################
 //        Sign In
@@ -82,7 +76,6 @@ exports.login = catchAsync(async (req, res, next) => {
   createSendToken(user, 200, req, res);
 });
 
-
 // ##########################
 //        Sign Out
 // ##########################
@@ -93,8 +86,6 @@ exports.logout = (req, res) => {
   });
   res.status(200).json({ status: "success" });
 };
-
-
 
 // ##########################
 //      Signed In Checker
@@ -144,8 +135,6 @@ exports.protect = catchAsync(async (req, res, next) => {
   next();
 });
 
-
-
 // ##################################
 //       Authenticated Checker
 // ###################################
@@ -180,7 +169,6 @@ exports.isLoggedIn = async (req, res, next) => {
   next();
 };
 
-
 // ##################################
 //       Restriction Checker
 // ###################################
@@ -196,8 +184,6 @@ exports.isLoggedIn = async (req, res, next) => {
 //     next();
 //   };
 // };
-
-
 
 // ##################################
 //       Forgot Password
@@ -236,8 +222,6 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   }
 });
 
-
-
 // ##################################
 //       Reset Password
 // ###################################
@@ -268,8 +252,6 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   createSendToken(user, 200, req, res);
 });
 
-
-
 // ##################################
 //       Update Password
 // ###################################
@@ -291,3 +273,120 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   // 4) Log user in, send JWT
   createSendToken(user, 200, req, res);
 });
+
+
+
+// ##################################
+//       GOOGLE OAuth
+// ###################################
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+exports.googleLogin = (req, res) => {
+  const { idToken } = req.body;
+
+  client
+    .verifyIdToken({ idToken, audience: process.env.GOOGLE_CLIENT_ID })
+    .then((response) => {
+      // console.log('GOOGLE LOGIN RESPONSE',response)
+      const { email_verified, name, email } = response.payload;
+      if (email_verified) {
+        User.findOne({ email }).exec((err, user) => {
+          if (user) {
+            const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
+              expiresIn: "7d",
+            });
+            const { _id, email, name, role } = user;
+            return res.json({
+              token,
+              user: { _id, email, name, role },
+            });
+          } else {
+            let password = email + process.env.JWT_SECRET;
+            user = new User({ name, email, password });
+            user.save((err, data) => {
+              if (err) {
+                console.log("ERROR GOOGLE LOGIN ON USER SAVE", err);
+                return res.status(400).json({
+                  error: "User signup failed with google",
+                });
+              }
+              const token = jwt.sign(
+                { _id: data._id },
+                process.env.JWT_SECRET,
+                { expiresIn: "7d" }
+              );
+              const { _id, email, name, role } = data;
+              return res.json({
+                token,
+                user: { _id, email, name, role },
+              });
+            });
+          }
+        });
+      } else {
+        return res.status(400).json({
+          error: "Google login failed. Try again",
+        });
+      }
+    });
+};
+
+
+
+// ##################################
+//       FACEBOOK OAuth
+// ###################################
+exports.facebookLogin = (req, res) => {
+  console.log("FACEBOOK LOGIN REQ BODY", req.body);
+  const { userID, accessToken } = req.body;
+
+  const url = `https://graph.facebook.com/v2.11/${userID}/?fields=id,name,email&access_token=${accessToken}`;
+
+  return (
+    axios(url, {
+      method: "GET",
+    })
+      .then((response) => response.json())
+      // .then(response => console.log(response))
+      .then((response) => {
+        const { email, name } = response;
+        User.findOne({ email }).exec((err, user) => {
+          if (user) {
+            const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
+              expiresIn: "7d",
+            });
+            const { _id, email, name, role } = user;
+            return res.json({
+              token,
+              user: { _id, email, name, role },
+            });
+          } else {
+            let password = email + process.env.JWT_SECRET;
+            user = new User({ name, email, password });
+            user.save((err, data) => {
+              if (err) {
+                console.log("ERROR FACEBOOK LOGIN ON USER SAVE", err);
+                return res.status(400).json({
+                  error: "User signup failed with facebook",
+                });
+              }
+              const token = jwt.sign(
+                { _id: data._id },
+                process.env.JWT_SECRET,
+                { expiresIn: "7d" }
+              );
+              const { _id, email, name, role } = data;
+              return res.json({
+                token,
+                user: { _id, email, name, role },
+              });
+            });
+          }
+        });
+      })
+      .catch((error) => {
+        res.json({
+          error: "Facebook login failed. Try later",
+        });
+      })
+  );
+};

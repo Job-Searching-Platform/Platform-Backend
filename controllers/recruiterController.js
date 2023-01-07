@@ -2,6 +2,7 @@ const Recruiter = require('./../models/recruiter/recruiterModel');
 const recruiterEducation = require('../models/recruiter/recruiterEducationModel');
 const recruiterExperience = require('./../models/recruiter/recruiterExperienceModel');
 const recruiterProfile = require('./../models/recruiter/recruiterProfileModel');
+const recruiterCompany = require('./../models/recruiter/companyModel');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
 const factory = require('./controlMiddleware');
@@ -47,7 +48,7 @@ exports.getRecruiterExperience = factory.getOne(recruiterExperience);
 exports.createRecruiterExperience = factory.createOne(recruiterExperience);
 exports.updateRecruiterExperience = factory.updateOne(recruiterExperience);
 exports.deleteRecruiterExperience = factory.deleteOne(recruiterExperience);
-
+exports.getAllCompany = factory.getAll(recruiterCompany)
 
 // ###############################
 //     Recruiter Education

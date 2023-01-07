@@ -1,6 +1,7 @@
 const crypto = require("crypto");
 const { promisify } = require("util");
 const jwt = require("jsonwebtoken");
+const { OAuth2Client } = require("google-auth-library");
 const Recruiter = require("../models/recruiter/recruiterModel");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
@@ -308,24 +309,24 @@ exports.googleLogin = (req, res) => {
       // console.log('GOOGLE LOGIN RESPONSE',response)
       const { email_verified, name, email } = response.payload;
       if (email_verified) {
-        User.findOne({ email }).exec((err, user) => {
-          if (user) {
-            const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
+        Recruiter.findOne({ email }).exec((err, recruiter) => {
+          if (recruiter) {
+            const token = jwt.sign({ _id: recruiter._id }, process.env.JWT_SECRET, {
               expiresIn: "7d",
             });
-            const { _id, email, name, role } = user;
+            const { _id, email, name, role } = recruiter;
             return res.json({
               token,
-              user: { _id, email, name, role },
+              recruiter: { _id, email, name, role },
             });
           } else {
             let password = email + process.env.JWT_SECRET;
-            user = new User({ name, email, password });
-            user.save((err, data) => {
+            recruiter = new Recruiter({ name, email, password });
+            recruiter.save((err, data) => {
               if (err) {
                 console.log("ERROR GOOGLE LOGIN ON USER SAVE", err);
                 return res.status(400).json({
-                  error: "User signup failed with google",
+                  error: "Recruiter signup failed with google",
                 });
               }
               const token = jwt.sign(
@@ -336,7 +337,7 @@ exports.googleLogin = (req, res) => {
               const { _id, email, name, role } = data;
               return res.json({
                 token,
-                user: { _id, email, name, role },
+                recruiter: { _id, email, name, role },
               });
             });
           }
@@ -356,9 +357,9 @@ exports.googleLogin = (req, res) => {
 // ###################################
 exports.facebookLogin = (req, res) => {
   console.log("FACEBOOK LOGIN REQ BODY", req.body);
-  const { userID, accessToken } = req.body;
+  const { recruiterID, accessToken } = req.body;
 
-  const url = `https://graph.facebook.com/v2.11/${userID}/?fields=id,name,email&access_token=${accessToken}`;
+  const url = `https://graph.facebook.com/v2.11/${recruiterID}/?fields=id,name,email&access_token=${accessToken}`;
 
   return (
     axios(url, {
@@ -368,24 +369,24 @@ exports.facebookLogin = (req, res) => {
       // .then(response => console.log(response))
       .then((response) => {
         const { email, name } = response;
-        User.findOne({ email }).exec((err, user) => {
-          if (user) {
-            const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
+        Recruiter.findOne({ email }).exec((err, recruiter) => {
+          if (recruiter) {
+            const token = jwt.sign({ _id: recruiter._id }, process.env.JWT_SECRET, {
               expiresIn: "7d",
             });
-            const { _id, email, name, role } = user;
+            const { _id, email, name, role } = recruiter;
             return res.json({
               token,
-              user: { _id, email, name, role },
+              recruiter: { _id, email, name, role },
             });
           } else {
             let password = email + process.env.JWT_SECRET;
-            user = new User({ name, email, password });
-            user.save((err, data) => {
+            recruiter = new Recruiter({ name, email, password });
+            recruiter.save((err, data) => {
               if (err) {
                 console.log("ERROR FACEBOOK LOGIN ON USER SAVE", err);
                 return res.status(400).json({
-                  error: "User signup failed with facebook",
+                  error: "Recruiter signup failed with facebook",
                 });
               }
               const token = jwt.sign(
@@ -396,7 +397,7 @@ exports.facebookLogin = (req, res) => {
               const { _id, email, name, role } = data;
               return res.json({
                 token,
-                user: { _id, email, name, role },
+                recruiter: { _id, email, name, role },
               });
             });
           }

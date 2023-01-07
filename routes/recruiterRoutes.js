@@ -12,8 +12,8 @@ router.post("/login", authRecruiterController.login);
 router.get("/logout", authRecruiterController.logout);
 router.post("/forgotPassword", authRecruiterController.forgotPassword);
 router.patch("/resetPassword/:token", authRecruiterController.resetPassword);
-router.post('/google-login', authController.googleLogin);
-router.post('/facebook-login', authController.facebookLogin);
+router.post('/google-login', authRecruiterController.googleLogin);
+router.post('/facebook-login', authRecruiterController.facebookLogin);
 // #############################
 //    Recruiter Account Info
 // #############################
@@ -43,6 +43,7 @@ router
   .patch(recruiterController.updateRecruiterExperience)
   .delete(recruiterController.deleteRecruiterExperience);
 router.post("/myExperience", recruiterController.createRecruiterExperience);
+router.get("/myCompany", recruiterController.getAllCompany);
 
 // #########     Recruiter Education     #################
 router

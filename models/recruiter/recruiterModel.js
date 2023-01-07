@@ -56,6 +56,14 @@ recruiterSchema.virtual('profile', {
   localField: '_id'
 });
 
+// Virtual populate
+recruiterSchema.virtual('copmany', {
+  ref: 'Company',
+  foreignField: 'recruiter',
+  localField: '_id'
+});
+
+
 
 recruiterSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {

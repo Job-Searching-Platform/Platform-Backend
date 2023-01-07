@@ -2,6 +2,11 @@ const mongoose = require("mongoose");
 
 const companySchema = new mongoose.Schema(
   {
+    recruiter: {
+      type: mongoose.Schema.ObjectId,
+      ref: "Recruiter",
+      required: [true, "Copmany must belong to a Recruiter!"],
+    },
     title: String,
     subTitle:String,
     descriptionText: String,
@@ -28,8 +33,19 @@ const companySchema = new mongoose.Schema(
     photo:String,
     companyValue:Number,
   },
+  {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }
+  },
   { versionKey: false }
 );
+
+// Virtual populate
+companySchema.virtual('job', {
+  ref: 'Job',
+  foreignField: 'company',
+  localField: '_id'
+});
 
 const Company = mongoose.model("Company", companySchema, "Company");
 

@@ -7,6 +7,11 @@ const JobSchema = new mongoose.Schema(
       ref: "Company",
       required: [true, "Job must belong to a Company!"],
     },
+    recruiter: {
+      type: mongoose.Schema.ObjectId,
+      ref: "Recruiter",
+      required: [true, "Job must belong to a Recruiter!"],
+    },
     title:String,
     descriptionText: String,
     responsibilitiesText: String,
@@ -24,6 +29,7 @@ const JobSchema = new mongoose.Schema(
     candidateNumber: Number,
     candidateLevel: [String],
     benefitsForCandidate: String,
+    requiredLanguages:[String],
   },
   { versionKey: false }
 );

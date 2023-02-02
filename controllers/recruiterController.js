@@ -1,45 +1,41 @@
-const Recruiter = require('./../models/recruiter/recruiterModel');
-const recruiterEducation = require('../models/recruiter/recruiterEducationModel');
-const recruiterExperience = require('./../models/recruiter/recruiterExperienceModel');
-const recruiterProfile = require('./../models/recruiter/recruiterProfileModel');
-const recruiterCompany = require('./../models/recruiter/companyModel');
-const catchAsync = require('./../utils/catchAsync');
-const AppError = require('./../utils/appError');
-const factory = require('./controlMiddleware');
+const Recruiter = require("./../models/recruiter/recruiterModel");
+const recruiterEducation = require("../models/recruiter/recruiterEducationModel");
+const recruiterExperience = require("./../models/recruiter/recruiterExperienceModel");
+const recruiterProfile = require("./../models/recruiter/recruiterProfileModel");
+const recruiterCompany = require("./../models/recruiter/companyModel");
+const catchAsync = require("./../utils/catchAsync");
+const AppError = require("./../utils/appError");
+const factory = require("./controlMiddleware");
 const AWS = require("aws-sdk");
 const uuid = require("uuid").v4;
-
 
 // ###############################
 //     Middleware
 // ###############################
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
-  Object.keys(obj).forEach(el => {
+  Object.keys(obj).forEach((el) => {
     if (allowedFields.includes(el)) newObj[el] = obj[el];
   });
   return newObj;
 };
 
-
-
-
-
 // ###############################
 //     Recruiter Name
 // ###############################
-exports.getRecruiter = factory.getOne(Recruiter, "profile");
+exports.getRecruiter = factory.getOne(Recruiter, ["profile", "company", "job"]);
 exports.updateRecruiter = factory.updateOne(Recruiter);
-
 
 // ###############################
 //      Recruiter Profile
 // ###############################
-exports.getRecruiterProfile = factory.getOne(recruiterProfile, ["education", "experience"]);
+exports.getRecruiterProfile = factory.getOne(recruiterProfile, [
+  "education",
+  "experience",
+]);
 exports.createRecruiterProfile = factory.createOne(recruiterProfile);
 exports.updateRecruiterProfile = factory.updateOne(recruiterProfile);
 exports.deleteRecruiterProfile = factory.deleteOne(recruiterProfile);
-
 
 // ###############################
 //     Recruiter Experience
@@ -48,7 +44,7 @@ exports.getRecruiterExperience = factory.getOne(recruiterExperience);
 exports.createRecruiterExperience = factory.createOne(recruiterExperience);
 exports.updateRecruiterExperience = factory.updateOne(recruiterExperience);
 exports.deleteRecruiterExperience = factory.deleteOne(recruiterExperience);
-exports.getAllCompany = factory.getAll(recruiterCompany)
+exports.getAllCompany = factory.getAll(recruiterCompany);
 
 // ###############################
 //     Recruiter Education
@@ -58,10 +54,6 @@ exports.createRecruiterEducation = factory.createOne(recruiterEducation);
 exports.updateRecruiterEducation = factory.updateOne(recruiterEducation);
 exports.deleteRecruiterEducation = factory.deleteOne(recruiterEducation);
 
-
-
-
-
 // ###############################
 //     Delete recruiter account
 // ###############################
@@ -69,12 +61,10 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
   await Recruiter.findByIdAndUpdate(req.recruiter.id, { active: false });
 
   res.status(204).json({
-    status: 'success',
-    data: null
+    status: "success",
+    data: null,
   });
 });
-
-
 
 // ###############################
 //     AWS for Media upload
@@ -104,8 +94,6 @@ exports.media_upload = catchAsync(async (req, res, next) => {
   );
 });
 
-
-
 // ###############################
 //     AWS for Resume upload
 // ###############################
@@ -133,9 +121,6 @@ exports.resume_upload = catchAsync(async (req, res, next) => {
     (err, url) => res.send({ key, url })
   );
 });
-
-
-
 
 // ###############################
 //     Middleware

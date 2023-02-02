@@ -1,21 +1,23 @@
 const mongoose = require("mongoose");
 
 const userEducationSchema = new mongoose.Schema({
-    profile: {
+  profile: {
     type: mongoose.Schema.ObjectId,
     ref: "Profile",
     required: [true, "Education must belong to a User!"],
   },
+  __v: { type: Number, select: false },
   school: String,
   graduation: Date,
   degree: String,
   major: [String],
   GPA: String,
-},
-{ versionKey: false }
+});
+
+const Education = mongoose.model(
+  "Education",
+  userEducationSchema,
+  "userEducation"
 );
-
-
-const Education = mongoose.model("Education", userEducationSchema, "userEducation");
 
 module.exports = Education;

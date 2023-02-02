@@ -14,6 +14,7 @@ const globalErrorHandler = require("./controllers/errorController");
 const userRouter = require('./routes/userRoutes');
 const recruiterRouter = require('./routes/recruiterRoutes');
 const companyRouter = require('./routes/companyRoutes');
+const jobRouter = require('./routes/jobDetailRoutes');
 
 
 // 1) INIT FUNCTIONS
@@ -50,6 +51,7 @@ app.use(compression());
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/recruiters', recruiterRouter);
 app.use('/api/v1/company', companyRouter);
+app.use('/api/v1/job', jobRouter);
 
 
 

@@ -4,14 +4,16 @@ const authRecruiterController = require("./../controllers/authRecruiterControlle
 
 const router = express.Router();
 
+router.get("/detail/:id", companyController.getCompany);
+
+router.use(authRecruiterController.protect); // Protect all routes after this middleware
 
 // #########     Recruiter Profile     #################
 router
-  .route("/company/:id")
-  .get(companyController.getCompany)
+  .route("/detail/:id")
   .patch(companyController.updateCompany)
   .delete(companyController.deleteCompany);
-router.post("/copmany", companyController.createCompany);
+router.post("/create-company", companyController.createCompany);
 
 // #########     Recruiter Media & Resume     #################
 router.get("/iconUpload", companyController.icon_upload);

@@ -5,15 +5,15 @@ const authRecruiterController = require("./../controllers/authRecruiterControlle
 const router = express.Router();
 
 
-router.get("/job/:id", jobController.getJob);
+router.get("/detail/:id", jobController.getJob);
+router.get("/all", jobController.getJobs);
 
 router.use(authRecruiterController.protect); // Protect all routes after this middleware
 
 
 // #########     Recruiter Experience     #################
 router
-  .route("/job/:id")
-  .get(jobController.getJob)
+  .route("/detail/:id")
   .patch(jobController.updateJob)
   .delete(jobController.deleteJob);
 router.post("/create-job", jobController.createJob);

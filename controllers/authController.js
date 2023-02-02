@@ -42,11 +42,12 @@ const createSendToken = (user, statusCode, req, res) => {
 // ##########################
 
 exports.signup = catchAsync(async (req, res, next) => {
+  console.log(req.body);
   const newUser = await User.create({
     fullName: req.body.fullName,
     email: req.body.email,
     password: req.body.password,
-    passwordConfirm: req.body.passwordConfirm,
+    confirmPassword: req.body.confirmPassword,
   });
 
   // const url = `${req.protocol}://${req.get("host")}/me`;
@@ -274,8 +275,6 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   createSendToken(user, 200, req, res);
 });
 
-
-
 // ##################################
 //       GOOGLE OAuth
 // ###################################
@@ -329,8 +328,6 @@ exports.googleLogin = (req, res) => {
       }
     });
 };
-
-
 
 // ##################################
 //       FACEBOOK OAuth

@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema(
       minlength: 8,
       select: false,
     },
-    passwordConfirm: {
+    confirmPassword: {
       type: String,
       required: [true, "Please confirm your password"],
       validate: {
@@ -32,6 +32,8 @@ const userSchema = new mongoose.Schema(
         message: "Passwords are not the same!",
       },
     },
+    photo: String,
+    __v: { type: Number, select: false },
     passwordChangedAt: Date,
     passwordResetToken: String,
     passwordResetExpires: Date,
@@ -43,19 +45,16 @@ const userSchema = new mongoose.Schema(
   },
   {
     toJSON: { virtuals: true },
-    toObject: { virtuals: true }
-  },
-  { versionKey: false }
+    toObject: { virtuals: true },
+  }
 );
 
-
 // Virtual populate
-userSchema.virtual('profile', {
-  ref: 'Profile',
-  foreignField: 'user',
-  localField: '_id'
+userSchema.virtual("profile", {
+  ref: "Profile",
+  foreignField: "user",
+  localField: "_id",
 });
-
 
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
@@ -64,7 +63,7 @@ userSchema.pre("save", async function (next) {
 
   this.password = await bcrypt.hash(this.password, 12);
 
-  this.passwordConfirm = undefined;
+  this.confirmPassword = undefined;
   next();
 });
 

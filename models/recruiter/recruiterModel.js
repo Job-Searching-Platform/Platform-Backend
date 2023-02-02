@@ -32,6 +32,8 @@ const recruiterSchema = new mongoose.Schema(
         message: "Passwords are not the same!",
       },
     },
+    photo: String,
+    __v: { type: Number, select: false },
     passwordChangedAt: Date,
     passwordResetToken: String,
     passwordResetExpires: Date,
@@ -43,27 +45,30 @@ const recruiterSchema = new mongoose.Schema(
   },
   {
     toJSON: { virtuals: true },
-    toObject: { virtuals: true }
-  },
-  { versionKey: false }
+    toObject: { virtuals: true },
+  }
 );
 
-
 // Virtual populate
-recruiterSchema.virtual('profile', {
-  ref: 'RecruiterProfile',
-  foreignField: 'recruiter',
-  localField: '_id'
+recruiterSchema.virtual("profile", {
+  ref: "RecruiterProfile",
+  foreignField: "recruiter",
+  localField: "_id",
 });
 
 // Virtual populate
-recruiterSchema.virtual('copmany', {
-  ref: 'Company',
-  foreignField: 'recruiter',
-  localField: '_id'
+recruiterSchema.virtual("job", {
+  ref: "Job",
+  foreignField: "recruiter",
+  localField: "_id",
 });
 
-
+// Virtual populate
+recruiterSchema.virtual("company", {
+  ref: "Company",
+  foreignField: "recruiter",
+  localField: "_id",
+});
 
 recruiterSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
@@ -120,6 +125,10 @@ recruiterSchema.methods.createPasswordResetToken = function () {
   return resetToken;
 };
 
-const Recruiter = mongoose.model("Recruiter", recruiterSchema, "recruiterAdmin");
+const Recruiter = mongoose.model(
+  "Recruiter",
+  recruiterSchema,
+  "recruiterAdmin"
+);
 
 module.exports = Recruiter;

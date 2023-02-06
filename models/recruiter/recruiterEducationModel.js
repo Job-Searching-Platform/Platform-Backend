@@ -1,21 +1,25 @@
 const mongoose = require("mongoose");
 
-const recruiterEducationSchema = new mongoose.Schema({
+const recruiterEducationSchema = new mongoose.Schema(
+  {
     profile: {
-    type: mongoose.Schema.ObjectId,
-    ref: "RecruiterProfile",
-    required: [true, "Education must belong to a Recruiter!"],
+      type: mongoose.Schema.ObjectId,
+      ref: "Recruiter",
+      required: [true, "Education must belong to a Recruiter!"],
+    },
+    school: String,
+    graduation: Date,
+    degree: String,
+    major: [String],
+    GPA: String,
   },
-  school: String,
-  graduation: Date,
-  degree: String,
-  major: [String],
-  GPA: String,
-},
-{ versionKey: false }
+  { versionKey: false }
 );
 
+const RecruiterEducation = mongoose.model(
+  "RecruiterEducation",
+  recruiterEducationSchema,
+  "recruiterEducation"
+);
 
-const RecruiterEducation = mongoose.model("RecruiterEducation", recruiterEducationSchema, "recruiterEducation");
-
-module.exports = RecruiterEducation
+module.exports = RecruiterEducation;

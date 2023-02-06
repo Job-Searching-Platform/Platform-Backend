@@ -12,8 +12,8 @@ router.post("/login", authController.login);
 router.get("/logout", authController.logout);
 router.post("/forgotPassword", authController.forgotPassword);
 router.patch("/resetPassword/:token", authController.resetPassword);
-router.post('/google-login', authController.googleLogin);
-router.post('/facebook-login', authController.facebookLogin);
+router.post("/google-login", authController.googleLogin);
+router.post("/facebook-login", authController.facebookLogin);
 
 // #############################
 //    User Account Info
@@ -24,18 +24,11 @@ router.patch("/updateMyPassword", authController.updatePassword);
 
 // #########     User Name     #################
 router
-  .route("/me/:id")
+  .route("/myProfile/:id")
   .get(userController.getUser)
   .patch(userController.updateUser);
-router.delete("/deleteMe", userController.deleteMe);
-
-// #########     User Profile     #################
-router
-  .route("/myProfile/:id")
-  .get(userController.getUserProfile)
-  .patch(userController.updateUserProfile)
-  .delete(userController.deleteUserProfile);
-router.post("/myProfile", userController.createUserProfile);
+router.delete("/deleteMe/:id", userController.deleteMe);
+router.get("/eduexp/:id", userController.getUserEduExp);
 
 // #########     User Experience     #################
 router

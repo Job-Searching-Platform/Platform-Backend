@@ -1,44 +1,30 @@
-const User = require('./../models/user/userModel');
-const userEducation = require('../models/user/userEducationModel');
-const userExperience = require('./../models/user/userExperienceModel');
-const userProfile = require('./../models/user/userProfileModel');
-const catchAsync = require('./../utils/catchAsync');
-const AppError = require('./../utils/appError');
-const factory = require('./controlMiddleware');
+const User = require("./../models/user/userModel");
+const userEducation = require("../models/user/userEducationModel");
+const userExperience = require("./../models/user/userExperienceModel");
+const userProfile = require("./../models/user/userProfileModel");
+const catchAsync = require("./../utils/catchAsync");
+const AppError = require("./../utils/appError");
+const factory = require("./controlMiddleware");
 const AWS = require("aws-sdk");
 const uuid = require("uuid").v4;
-
 
 // ###############################
 //     Middleware
 // ###############################
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
-  Object.keys(obj).forEach(el => {
+  Object.keys(obj).forEach((el) => {
     if (allowedFields.includes(el)) newObj[el] = obj[el];
   });
   return newObj;
 };
 
-
-
-
-
 // ###############################
 //     User Name
 // ###############################
-exports.getUser = factory.getOne(User, "profile");
+exports.getUser = factory.getOne(User);
+exports.getUserEduExp = factory.getOne(User, ["education", "experience"]);
 exports.updateUser = factory.updateOne(User);
-
-
-// ###############################
-//      User Profile
-// ###############################
-exports.getUserProfile = factory.getOne(userProfile, ["education", "experience"]);
-exports.createUserProfile = factory.createOne(userProfile);
-exports.updateUserProfile = factory.updateOne(userProfile);
-exports.deleteUserProfile = factory.deleteOne(userProfile);
-
 
 // ###############################
 //     User Experience
@@ -48,7 +34,6 @@ exports.createUserExperience = factory.createOne(userExperience);
 exports.updateUserExperience = factory.updateOne(userExperience);
 exports.deleteUserExperience = factory.deleteOne(userExperience);
 
-
 // ###############################
 //     User Education
 // ###############################
@@ -57,23 +42,17 @@ exports.createUserEducation = factory.createOne(userEducation);
 exports.updateUserEducation = factory.updateOne(userEducation);
 exports.deleteUserEducation = factory.deleteOne(userEducation);
 
-
-
-
-
 // ###############################
 //     Delete user account
 // ###############################
 exports.deleteMe = catchAsync(async (req, res, next) => {
-  await User.findByIdAndUpdate(req.user.id, { active: false });
+  await User.findByIdAndUpdate(req.params.id, { active: false });
 
   res.status(204).json({
-    status: 'success',
-    data: null
+    status: "success",
+    data: null,
   });
 });
-
-
 
 // ###############################
 //     AWS for Media upload
@@ -103,8 +82,6 @@ exports.media_upload = catchAsync(async (req, res, next) => {
   );
 });
 
-
-
 // ###############################
 //     AWS for Resume upload
 // ###############################
@@ -132,9 +109,6 @@ exports.resume_upload = catchAsync(async (req, res, next) => {
     (err, url) => res.send({ key, url })
   );
 });
-
-
-
 
 // ###############################
 //     Middleware

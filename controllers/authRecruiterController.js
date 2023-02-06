@@ -8,8 +8,6 @@ const AppError = require("../utils/appError");
 const Email = require("../utils/email");
 const axios = require("axios");
 
-
-
 // ##########################
 //        JWT creators
 // ##########################
@@ -18,29 +16,28 @@ const signToken = (id) => {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 };
-const createSendToken = (recruiter, statusCode, req, res) => {
-  const token = signToken(recruiter._id);
+const createSendToken = (user, statusCode, req, res) => {
+  const token = signToken(user._id);
+
+  const expiry = new Date(
+    Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
+  );
 
   res.cookie("jwt", token, {
-    expires: new Date(
-      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
-    ),
+    expires: expiry,
     httpOnly: true,
     secure: req.secure || req.headers["x-forwarded-proto"] === "https",
   });
 
   // Remove password from output
-  recruiter.password = undefined;
+  user.password = expiry;
 
   res.status(statusCode).json({
     status: "success",
     token,
-    recruiter,
+    user,
   });
 };
-
-
-
 
 // ##########################
 //        Sign Up
@@ -60,8 +57,6 @@ exports.signup = catchAsync(async (req, res, next) => {
   createSendToken(newRecruiter, 201, req, res);
 });
 
-
-
 // ##########################
 //        Sign In
 // ##########################
@@ -75,14 +70,16 @@ exports.login = catchAsync(async (req, res, next) => {
   // 2) Check if recruiter exists && password is correct
   const recruiter = await Recruiter.findOne({ email }).select("+password");
 
-  if (!recruiter || !(await recruiter.correctPassword(password, recruiter.password))) {
+  if (
+    !recruiter ||
+    !(await recruiter.correctPassword(password, recruiter.password))
+  ) {
     return next(new AppError("Incorrect email or password", 401));
   }
 
   // 3) If everything ok, send token to client
   createSendToken(recruiter, 200, req, res);
 });
-
 
 // ##########################
 //        Sign Out
@@ -94,8 +91,6 @@ exports.logout = (req, res) => {
   });
   res.status(200).json({ status: "success" });
 };
-
-
 
 // ##########################
 //      Signed In Checker
@@ -135,7 +130,10 @@ exports.protect = catchAsync(async (req, res, next) => {
   // 4) Check if recruiter changed password after the token was issued
   if (currentRecruiter.changedPasswordAfter(decoded.iat)) {
     return next(
-      new AppError("Recruiter recently changed password! Please log in again.", 401)
+      new AppError(
+        "Recruiter recently changed password! Please log in again.",
+        401
+      )
     );
   }
 
@@ -144,8 +142,6 @@ exports.protect = catchAsync(async (req, res, next) => {
   res.locals.recruiter = currentRecruiter;
   next();
 });
-
-
 
 // ##################################
 //       Authenticated Checker
@@ -180,25 +176,6 @@ exports.isLoggedIn = async (req, res, next) => {
   }
   next();
 };
-
-
-// ##################################
-//       Restriction Checker
-// ###################################
-// exports.restrictTo = (...roles) => {
-//   return (req, res, next) => {
-//     // roles ['admin', 'lead-guide']. role='recruiter'
-//     if (!roles.includes(req.recruiter.role)) {
-//       return next(
-//         new AppError("You do not have permission to perform this action", 403)
-//       );
-//     }
-
-//     next();
-//   };
-// };
-
-
 
 // ##################################
 //       Forgot Password
@@ -237,8 +214,6 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   }
 });
 
-
-
 // ##################################
 //       Reset Password
 // ###################################
@@ -269,17 +244,22 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   createSendToken(recruiter, 200, req, res);
 });
 
-
-
 // ##################################
 //       Update Password
 // ###################################
 exports.updatePassword = catchAsync(async (req, res, next) => {
   // 1) Get recruiter from collection
-  const recruiter = await Recruiter.findById(req.recruiter.id).select("+password");
+  const recruiter = await Recruiter.findById(req.recruiter.id).select(
+    "+password"
+  );
 
   // 2) Check if POSTed current password is correct
-  if (!(await recruiter.correctPassword(req.body.passwordCurrent, recruiter.password))) {
+  if (
+    !(await recruiter.correctPassword(
+      req.body.passwordCurrent,
+      recruiter.password
+    ))
+  ) {
     return next(new AppError("Your current password is wrong.", 401));
   }
 
@@ -292,9 +272,6 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   // 4) Log recruiter in, send JWT
   createSendToken(recruiter, 200, req, res);
 });
-
-
-
 
 // ##################################
 //       GOOGLE OAuth
@@ -311,9 +288,13 @@ exports.googleLogin = (req, res) => {
       if (email_verified) {
         Recruiter.findOne({ email }).exec((err, recruiter) => {
           if (recruiter) {
-            const token = jwt.sign({ _id: recruiter._id }, process.env.JWT_SECRET, {
-              expiresIn: "7d",
-            });
+            const token = jwt.sign(
+              { _id: recruiter._id },
+              process.env.JWT_SECRET,
+              {
+                expiresIn: "7d",
+              }
+            );
             const { _id, email, name, role } = recruiter;
             return res.json({
               token,
@@ -350,8 +331,6 @@ exports.googleLogin = (req, res) => {
     });
 };
 
-
-
 // ##################################
 //       FACEBOOK OAuth
 // ###################################
@@ -371,9 +350,13 @@ exports.facebookLogin = (req, res) => {
         const { email, name } = response;
         Recruiter.findOne({ email }).exec((err, recruiter) => {
           if (recruiter) {
-            const token = jwt.sign({ _id: recruiter._id }, process.env.JWT_SECRET, {
-              expiresIn: "7d",
-            });
+            const token = jwt.sign(
+              { _id: recruiter._id },
+              process.env.JWT_SECRET,
+              {
+                expiresIn: "7d",
+              }
+            );
             const { _id, email, name, role } = recruiter;
             return res.json({
               token,
@@ -410,4 +393,3 @@ exports.facebookLogin = (req, res) => {
       })
   );
 };
-

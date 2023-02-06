@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const recruiterExperienceSchema = new mongoose.Schema({
  profile: {
     type: mongoose.Schema.ObjectId,
-    ref: "RecruiterProfile",
+    ref: "Recruiter",
     required: [true, "Experience must belong to a Recruiter!"],
   },
   company: String,

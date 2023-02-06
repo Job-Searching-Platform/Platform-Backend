@@ -42,6 +42,27 @@ const userSchema = new mongoose.Schema(
       default: true,
       select: false,
     },
+    address: [
+      {
+        country: String,
+        city: String,
+        phoneNumber: Number,
+      },
+    ],
+    socialLinks: [
+      {
+        website: String,
+        linkedin: String,
+        github: String,
+      },
+    ],
+    achievement: String,
+    bio: String,
+    skills: [String],
+    opentoRoles: [String],
+    primaryRole: String,
+    yearofExperience: Number,
+    resume: String,
   },
   {
     toJSON: { virtuals: true },
@@ -50,9 +71,16 @@ const userSchema = new mongoose.Schema(
 );
 
 // Virtual populate
-userSchema.virtual("profile", {
-  ref: "Profile",
-  foreignField: "user",
+userSchema.virtual("education", {
+  ref: "Education",
+  foreignField: "profile",
+  localField: "_id",
+});
+
+// Virtual populate
+userSchema.virtual("experience", {
+  ref: "Experience",
+  foreignField: "profile",
   localField: "_id",
 });
 

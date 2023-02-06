@@ -23,19 +23,13 @@ const filterObj = (obj, ...allowedFields) => {
 // ###############################
 //     Recruiter Name
 // ###############################
-exports.getRecruiter = factory.getOne(Recruiter, ["profile", "company", "job"]);
-exports.updateRecruiter = factory.updateOne(Recruiter);
-
-// ###############################
-//      Recruiter Profile
-// ###############################
-exports.getRecruiterProfile = factory.getOne(recruiterProfile, [
+exports.getRecruiter = factory.getOne(Recruiter);
+exports.getRecruiterEduExp = factory.getOne(Recruiter, [
   "education",
   "experience",
 ]);
-exports.createRecruiterProfile = factory.createOne(recruiterProfile);
-exports.updateRecruiterProfile = factory.updateOne(recruiterProfile);
-exports.deleteRecruiterProfile = factory.deleteOne(recruiterProfile);
+exports.getRecruiterComJob = factory.getOne(Recruiter, ["company", "job"]);
+exports.updateRecruiter = factory.updateOne(Recruiter);
 
 // ###############################
 //     Recruiter Experience
@@ -58,7 +52,7 @@ exports.deleteRecruiterEducation = factory.deleteOne(recruiterEducation);
 //     Delete recruiter account
 // ###############################
 exports.deleteMe = catchAsync(async (req, res, next) => {
-  await Recruiter.findByIdAndUpdate(req.recruiter.id, { active: false });
+  await Recruiter.findByIdAndUpdate(req.params.id, { active: false });
 
   res.status(204).json({
     status: "success",

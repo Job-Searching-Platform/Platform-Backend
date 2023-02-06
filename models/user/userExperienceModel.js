@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const userExperienceSchema = new mongoose.Schema({
   profile: {
     type: mongoose.Schema.ObjectId,
-    ref: "Profile",
+    ref: "User",
     required: [true, "Experience must belong to a User!"],
   },
   __v: { type: Number, select: false },

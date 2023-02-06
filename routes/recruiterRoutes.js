@@ -12,8 +12,8 @@ router.post("/login", authRecruiterController.login);
 router.get("/logout", authRecruiterController.logout);
 router.post("/forgotPassword", authRecruiterController.forgotPassword);
 router.patch("/resetPassword/:token", authRecruiterController.resetPassword);
-router.post('/google-login', authRecruiterController.googleLogin);
-router.post('/facebook-login', authRecruiterController.facebookLogin);
+router.post("/google-login", authRecruiterController.googleLogin);
+router.post("/facebook-login", authRecruiterController.facebookLogin);
 // #############################
 //    Recruiter Account Info
 // #############################
@@ -23,18 +23,12 @@ router.patch("/updateMyPassword", authRecruiterController.updatePassword);
 
 // #########     Recruiter Name     #################
 router
-  .route("/me/:id")
+  .route("/myProfile/:id")
   .get(recruiterController.getRecruiter)
   .patch(recruiterController.updateRecruiter);
-router.delete("/deleteMe", recruiterController.deleteMe);
-
-// #########     Recruiter Profile     #################
-router
-  .route("/myProfile/:id")
-  .get(recruiterController.getRecruiterProfile)
-  .patch(recruiterController.updateRecruiterProfile)
-  .delete(recruiterController.deleteRecruiterProfile);
-router.post("/myProfile", recruiterController.createRecruiterProfile);
+router.delete("/deleteMe/:id", recruiterController.deleteMe);
+router.get("/eduexp/:id", recruiterController.getRecruiterEduExp);
+router.get("/comjob/:id", recruiterController.getRecruiterComJob);
 
 // #########     Recruiter Experience     #################
 router

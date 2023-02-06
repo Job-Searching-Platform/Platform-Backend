@@ -32,16 +32,36 @@ const recruiterSchema = new mongoose.Schema(
         message: "Passwords are not the same!",
       },
     },
-    photo: String,
     __v: { type: Number, select: false },
     passwordChangedAt: Date,
     passwordResetToken: String,
     passwordResetExpires: Date,
+    photo: String,
     active: {
       type: Boolean,
       default: true,
       select: false,
     },
+
+    address: [
+      {
+        country: String,
+        city: String,
+        phoneNumber: Number,
+      },
+    ],
+    socialLinks: [
+      {
+        website: String,
+        linkedin: String,
+        github: String,
+      },
+    ],
+    achievement: String,
+    bio: String,
+    skills: [String],
+    primaryRole: String,
+    yearofExperience: Number,
   },
   {
     toJSON: { virtuals: true },
@@ -49,21 +69,28 @@ const recruiterSchema = new mongoose.Schema(
   }
 );
 
-// Virtual populate
-recruiterSchema.virtual("profile", {
-  ref: "RecruiterProfile",
-  foreignField: "recruiter",
+// Virtual Education
+recruiterSchema.virtual("education", {
+  ref: "RecruiterEducation",
+  foreignField: "profile",
   localField: "_id",
 });
 
-// Virtual populate
+// Virtual Experience
+recruiterSchema.virtual("experience", {
+  ref: "RecruiterExperience",
+  foreignField: "profile",
+  localField: "_id",
+});
+
+// Virtual Job
 recruiterSchema.virtual("job", {
   ref: "Job",
   foreignField: "recruiter",
   localField: "_id",
 });
 
-// Virtual populate
+// Virtual Company
 recruiterSchema.virtual("company", {
   ref: "Company",
   foreignField: "recruiter",

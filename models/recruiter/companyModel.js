@@ -39,7 +39,7 @@ const companySchema = new mongoose.Schema(
   }
 );
 
-// Virtual populate
+// Virtual Job
 companySchema.virtual("job", {
   ref: "Job",
   foreignField: "company",

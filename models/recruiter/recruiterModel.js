@@ -32,6 +32,13 @@ const recruiterSchema = new mongoose.Schema(
         message: "Passwords are not the same!",
       },
     },
+    // bookmarkedCandidates: [
+    //   {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: 'User',
+    //   },
+    // ],
+    
     __v: { type: Number, select: false },
     passwordChangedAt: Date,
     passwordResetToken: String,

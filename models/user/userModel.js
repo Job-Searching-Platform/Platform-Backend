@@ -32,6 +32,18 @@ const userSchema = new mongoose.Schema(
         message: "Passwords are not the same!",
       },
     },
+    // bookmarkedJobs: [
+    //   {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: 'Job',
+    //   },
+    // ],
+    // bookmarkedBy: [
+    //   {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: 'Recruiter',
+    //   },
+    // ],
     photo: String,
     __v: { type: Number, select: false },
     passwordChangedAt: Date,

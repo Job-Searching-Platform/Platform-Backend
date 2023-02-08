@@ -14,6 +14,7 @@ const userRouter = require("./routes/userRoutes");
 const recruiterRouter = require("./routes/recruiterRoutes");
 const companyRouter = require("./routes/companyRoutes");
 const jobRouter = require("./routes/jobDetailRoutes");
+const uploadRouter = require("./routes/uploadRoutes");
 
 // 1) INIT FUNCTIONS
 const app = express();
@@ -45,6 +46,7 @@ app.use("/api/v1/users", userRouter);
 app.use("/api/v1/recruiters", recruiterRouter);
 app.use("/api/v1/company", companyRouter);
 app.use("/api/v1/job", jobRouter);
+app.use("/api/v1/upload", uploadRouter);
 
 // app.all("*", (req, res, next) => {
 //     next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));

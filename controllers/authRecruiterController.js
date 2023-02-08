@@ -279,30 +279,26 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 exports.googleLogin = (req, res) => {
   const { idToken } = req.body;
+  console.log(idToken);
 
   client
     .verifyIdToken({ idToken, audience: process.env.GOOGLE_CLIENT_ID })
     .then((response) => {
-      // console.log('GOOGLE LOGIN RESPONSE',response)
       const { email_verified, name, email } = response.payload;
+
       if (email_verified) {
         Recruiter.findOne({ email }).exec((err, recruiter) => {
           if (recruiter) {
-            const token = jwt.sign(
-              { _id: recruiter._id },
-              process.env.JWT_SECRET,
-              {
-                expiresIn: "7d",
-              }
-            );
-            const { _id, email, name, role } = recruiter;
-            return res.json({
-              token,
-              recruiter: { _id, email, name, role },
-            });
+            createSendToken(recruiter, 200, req, res);
           } else {
             let password = email + process.env.JWT_SECRET;
-            recruiter = new Recruiter({ name, email, password });
+            console.log(name, "sdfgsdfgegrwg");
+            recruiter = new Recruiter({
+              email,
+              passwordConfirm: password,
+              password,
+              fullName: name,
+            });
             recruiter.save((err, data) => {
               if (err) {
                 console.log("ERROR GOOGLE LOGIN ON USER SAVE", err);
@@ -310,16 +306,7 @@ exports.googleLogin = (req, res) => {
                   error: "Recruiter signup failed with google",
                 });
               }
-              const token = jwt.sign(
-                { _id: data._id },
-                process.env.JWT_SECRET,
-                { expiresIn: "7d" }
-              );
-              const { _id, email, name, role } = data;
-              return res.json({
-                token,
-                recruiter: { _id, email, name, role },
-              });
+              createSendToken(data, 200, req, res);
             });
           }
         });
@@ -350,18 +337,7 @@ exports.facebookLogin = (req, res) => {
         const { email, name } = response;
         Recruiter.findOne({ email }).exec((err, recruiter) => {
           if (recruiter) {
-            const token = jwt.sign(
-              { _id: recruiter._id },
-              process.env.JWT_SECRET,
-              {
-                expiresIn: "7d",
-              }
-            );
-            const { _id, email, name, role } = recruiter;
-            return res.json({
-              token,
-              recruiter: { _id, email, name, role },
-            });
+            createSendToken(recruiter, 200, req, res);
           } else {
             let password = email + process.env.JWT_SECRET;
             recruiter = new Recruiter({ name, email, password });
@@ -372,16 +348,7 @@ exports.facebookLogin = (req, res) => {
                   error: "Recruiter signup failed with facebook",
                 });
               }
-              const token = jwt.sign(
-                { _id: data._id },
-                process.env.JWT_SECRET,
-                { expiresIn: "7d" }
-              );
-              const { _id, email, name, role } = data;
-              return res.json({
-                token,
-                recruiter: { _id, email, name, role },
-              });
+              createSendToken(data, 200, req, res);
             });
           }
         });

@@ -1,7 +1,7 @@
 const Recruiter = require("./../models/recruiter/recruiterModel");
+const User = require("./../models/user/userModel");
 const recruiterEducation = require("../models/recruiter/recruiterEducationModel");
 const recruiterExperience = require("./../models/recruiter/recruiterExperienceModel");
-const recruiterProfile = require("./../models/recruiter/recruiterProfileModel");
 const recruiterCompany = require("./../models/recruiter/companyModel");
 const catchAsync = require("./../utils/catchAsync");
 const AppError = require("./../utils/appError");
@@ -30,6 +30,13 @@ exports.getRecruiterEduExp = factory.getOne(Recruiter, [
 ]);
 exports.getRecruiterComJob = factory.getOne(Recruiter, ["company", "job"]);
 exports.updateRecruiter = factory.updateOne(Recruiter);
+
+//  ##################################
+//            Bookmark
+//  ##################################
+exports.createBookmark = factory.createBookmark(Recruiter, User);
+exports.deleteBookmark = factory.deleteBookmark(Recruiter, "recruiter");
+exports.getBookmark = factory.getBookmark(Recruiter, "bookmarkedCandidates");
 
 // ###############################
 //     Recruiter Experience

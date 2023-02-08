@@ -30,6 +30,13 @@ router
 router.delete("/deleteMe/:id", userController.deleteMe);
 router.get("/eduexp/:id", userController.getUserEduExp);
 
+// #########    Bookmark Job     #################
+router
+  .route("/bookmark/:id")
+  .delete(userController.deleteBookmark)
+  .post(userController.createBookmark);
+router.get("/bookmarked", userController.getBookmark);
+
 // #########     User Experience     #################
 router
   .route("/myExperience/:id")

@@ -80,3 +80,63 @@ exports.getAll = (Model) =>
       doc,
     });
   });
+
+exports.createBookmark = (personModel, jobModel, path) =>
+  catchAsync(async (req, res) => {
+    const doc = await personModel.findById(req.user._id);
+    const job = await jobModel.findById(req.params.id);
+    if (path === "user") {
+      const isBookmarked = doc.bookmarkedJobs.includes(job._id);
+      if (isBookmarked) {
+        doc.bookmarkedJobs = doc.bookmarkedJobs.filter((j) => j !== job._id);
+      } else {
+        doc.bookmarkedJobs.push(job._id);
+      }
+    } else {
+      const isBookmarked = doc.bookmarkedCandidates.includes(job._id);
+      if (isBookmarked) {
+        doc.bookmarkedCandidates = doc.bookmarkedCandidates.filter(
+          (j) => j !== job._id
+        );
+      } else {
+        doc.bookmarkedCandidates.push(job._id);
+      }
+    }
+    await doc.save();
+
+    res.status(201).json({
+      status: "success",
+      doc,
+    });
+  });
+exports.deleteBookmark = (personModel, path) =>
+  catchAsync(async (req, res) => {
+    const doc = await personModel.findById(req.user._id);
+    if (path === "user") {
+      doc.bookmarkedJobs = doc.bookmarkedJobs.filter(
+        (j) => j !== req.params.id
+      );
+    } else {
+      doc.bookmarkedCandidates = doc.bookmarkedCandidates.filter(
+        (j) => j !== req.params.id
+      );
+    }
+    await doc.save();
+
+    res.status(201).json({
+      status: "success",
+      doc,
+    });
+  });
+
+exports.getBookmark = (personModel, popOptions) =>
+  catchAsync(async (req, res) => {
+    let query = await personModel.findById(req.user._id);
+    if (popOptions) query = query.populate(popOptions);
+    const doc = await query;
+
+    res.status(201).json({
+      status: "success",
+      doc,
+    });
+  });

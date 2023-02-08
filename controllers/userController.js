@@ -1,7 +1,7 @@
 const User = require("./../models/user/userModel");
+const Job = require("./../models/recruiter/jobModel");
 const userEducation = require("../models/user/userEducationModel");
 const userExperience = require("./../models/user/userExperienceModel");
-const userProfile = require("./../models/user/userProfileModel");
 const catchAsync = require("./../utils/catchAsync");
 const AppError = require("./../utils/appError");
 const factory = require("./controlMiddleware");
@@ -11,13 +11,13 @@ const uuid = require("uuid").v4;
 // ###############################
 //     Middleware
 // ###############################
-const filterObj = (obj, ...allowedFields) => {
-  const newObj = {};
-  Object.keys(obj).forEach((el) => {
-    if (allowedFields.includes(el)) newObj[el] = obj[el];
-  });
-  return newObj;
-};
+// const filterObj = (obj, ...allowedFields) => {
+//   const newObj = {};
+//   Object.keys(obj).forEach((el) => {
+//     if (allowedFields.includes(el)) newObj[el] = obj[el];
+//   });
+//   return newObj;
+// };
 
 // ###############################
 //     User Name
@@ -25,7 +25,9 @@ const filterObj = (obj, ...allowedFields) => {
 exports.getUser = factory.getOne(User);
 exports.getUserEduExp = factory.getOne(User, ["education", "experience"]);
 exports.updateUser = factory.updateOne(User);
-
+exports.createBookmark = factory.createBookmark(User, Job);
+exports.deleteBookmark = factory.deleteBookmark(User, "user");
+exports.getBookmark = factory.getBookmark(User, "bookmarkedJobs");
 // ###############################
 //     User Experience
 // ###############################

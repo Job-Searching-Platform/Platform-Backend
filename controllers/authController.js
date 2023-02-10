@@ -29,7 +29,6 @@ const createSendToken = (user, statusCode, req, res) => {
 
   // Remove password from output
   user.password = expiry;
-  console.log(user);
 
   res.status(statusCode).json({
     status: "success",
@@ -43,7 +42,6 @@ const createSendToken = (user, statusCode, req, res) => {
 // ##########################
 
 exports.signup = catchAsync(async (req, res, next) => {
-  console.log(req.body);
   const newUser = await User.create({
     fullName: req.body.fullName,
     email: req.body.email,

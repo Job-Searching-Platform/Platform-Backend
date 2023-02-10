@@ -15,6 +15,7 @@ router.patch("/resetPassword/:token", authController.resetPassword);
 router.post("/google-login", authController.googleLogin);
 router.post("/facebook-login", authController.facebookLogin);
 
+router.post("/:id/apply", userController.applyJob);
 // #############################
 //    User Account Info
 // #############################
@@ -56,5 +57,10 @@ router.post("/myEducation", userController.createUserEducation);
 // #########     User Media & Resume     #################
 router.get("/resumeUpload", userController.resume_upload);
 router.get("/mediaUpload", userController.media_upload);
+
+// Create a new application
+
+// Get a list of applied jobs for the current candidate
+router.get("/applied-jobs", userController.getAppliedJobs);
 
 module.exports = router;

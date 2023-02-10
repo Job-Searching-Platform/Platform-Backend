@@ -15,6 +15,14 @@ const JobSchema = new mongoose.Schema({
   //   type: Boolean,
   //   default: false,
   // },
+
+  applications: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Application",
+      // select: false,
+    },
+  ],
   __v: { type: Number, select: false },
   title: String,
   descriptionText: String,

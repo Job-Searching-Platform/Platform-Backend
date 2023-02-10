@@ -1,12 +1,14 @@
 const User = require("./../models/user/userModel");
 const Job = require("./../models/recruiter/jobModel");
 const userEducation = require("../models/user/userEducationModel");
+const Application = require("../models/user/jobApplication");
 const userExperience = require("./../models/user/userExperienceModel");
 const catchAsync = require("./../utils/catchAsync");
 const AppError = require("./../utils/appError");
 const factory = require("./controlMiddleware");
 const AWS = require("aws-sdk");
 const uuid = require("uuid").v4;
+const mongoose = require("mongoose");
 
 // ###############################
 //     Middleware
@@ -44,10 +46,67 @@ exports.createUserEducation = factory.createOne(userEducation);
 exports.updateUserEducation = factory.updateOne(userEducation);
 exports.deleteUserEducation = factory.deleteOne(userEducation);
 
+// ####################################################
+//           Apply to Jobs
+// ####################################################
+exports.applyJob = catchAsync(async (req, res) => {
+  // console.log(req.params.id);
+  const candidate = await User.findById(req.body.user._id);
+  const jobPosting = await Job.findById(req.params.id);
+
+  const existingApplication = await Application.findOne({
+    candidate: candidate._id,
+    jobPosting: jobPosting._id,
+  });
+
+  if (existingApplication) {
+    return res
+      .status(400)
+      .send({ error: "You have already applied to this job posting." });
+  }
+
+  const application = new Application({
+    candidate: candidate._id,
+    jobPosting: jobPosting._id,
+  });
+  await application.save();
+
+  candidate.applications.push(application._id);
+  await candidate.save();
+
+  jobPosting.applications.push(application._id);
+  await jobPosting.save();
+  console.log(candidate._id, "can ID");
+  console.log(application._id, "app ID");
+  console.log(jobPosting._id, "job ID");
+
+  res.status(201).json({
+    status: "success",
+    doc: "Application submitted successfully",
+  });
+});
+
+// ###############################
+//     Get Applied Jobs List
+// ###############################
+exports.getAppliedJobs = catchAsync(async (req, res) => {
+  const candidate = await User.findById(req.body.user._id).populate({
+    path: "applications",
+    populate: { path: "jobPosting" },
+  });
+
+  let result = candidate.applications.map((app) => app.jobPosting);
+
+  res.status(201).json({
+    status: "success",
+    doc: result,
+  });
+});
+
 // ###############################
 //     Delete user account
 // ###############################
-exports.deleteMe = catchAsync(async (req, res, next) => {
+exports.deleteMe = catchAsync(async (req, res) => {
   await User.findByIdAndUpdate(req.params.id, { active: false });
 
   res.status(204).json({

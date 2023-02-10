@@ -279,7 +279,6 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 exports.googleLogin = (req, res) => {
   const { idToken } = req.body;
-  console.log(idToken);
 
   client
     .verifyIdToken({ idToken, audience: process.env.GOOGLE_CLIENT_ID })
@@ -292,7 +291,6 @@ exports.googleLogin = (req, res) => {
             createSendToken(recruiter, 200, req, res);
           } else {
             let password = email + process.env.JWT_SECRET;
-            console.log(name, "sdfgsdfgegrwg");
             recruiter = new Recruiter({
               email,
               passwordConfirm: password,

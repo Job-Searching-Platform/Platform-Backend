@@ -18,4 +18,8 @@ router
   .delete(jobController.deleteJob);
 router.post("/create-job", jobController.createJob);
 
+// Get a list of applicants for a specific job posting
+router.get("/:id/applicants", jobController.getJobApplicants);
+
+
 module.exports = router;

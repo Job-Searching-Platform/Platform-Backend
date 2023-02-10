@@ -1,4 +1,5 @@
 const jobCompany = require("./../models/recruiter/jobModel");
+const User = require("../models/user/userModel");
 const catchAsync = require("./../utils/catchAsync");
 const AppError = require("./../utils/appError");
 const factory = require("./controlMiddleware");
@@ -13,6 +14,21 @@ exports.getJobs = factory.getAll(jobCompany);
 exports.createJob = factory.createOne(jobCompany);
 exports.updateJob = factory.updateOne(jobCompany);
 exports.deleteJob = factory.deleteOne(jobCompany);
+
+exports.getJobApplicants = catchAsync(async (req, res) => {
+  const jobPosting = await jobCompany
+    .findById(req.params.id)
+    .populate("applications");
+  const candidateIds = jobPosting.applications.map((app) => app.candidate);
+  const doc = await User.find({
+    _id: { $in: candidateIds },
+  });
+
+  res.status(200).json({
+    status: "success",
+    doc,
+  });
+});
 
 // ###############################
 //     AWS for Media upload

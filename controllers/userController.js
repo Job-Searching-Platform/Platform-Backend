@@ -90,14 +90,14 @@ exports.applyJob = catchAsync(async (req, res) => {
 //     Get Applied Jobs List
 // ###############################
 exports.getAppliedJobs = catchAsync(async (req, res) => {
-  const candidate = await User.findById(req.body.user._id).populate({
+  const candidate = await User.findById(req.params.id).populate({
     path: "applications",
     populate: { path: "jobPosting" },
   });
 
   let result = candidate.applications.map((app) => app.jobPosting);
 
-  res.status(201).json({
+  res.status(200).json({
     status: "success",
     doc: result,
   });

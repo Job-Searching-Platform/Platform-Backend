@@ -50,7 +50,7 @@ exports.deleteUserEducation = factory.deleteOne(userEducation);
 //           Apply to Jobs
 // ####################################################
 exports.applyJob = catchAsync(async (req, res) => {
-  // console.log(req.params.id);
+  // console.log(req.body.user._id);
   const candidate = await User.findById(req.body.user._id);
   const jobPosting = await Job.findById(req.params.id);
 

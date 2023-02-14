@@ -19,10 +19,15 @@ exports.getJobApplicants = catchAsync(async (req, res) => {
   const jobPosting = await jobCompany
     .findById(req.params.id)
     .populate("applications");
+
   const candidateIds = jobPosting.applications.map((app) => app.candidate);
   const doc = await User.find({
     _id: { $in: candidateIds },
   });
+
+  for (let i = 0; i < doc.length; i++) {
+    doc[i].applications = [null];
+  }
 
   res.status(200).json({
     status: "success",

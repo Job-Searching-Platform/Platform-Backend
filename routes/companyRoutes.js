@@ -5,6 +5,7 @@ const authRecruiterController = require("./../controllers/authRecruiterControlle
 const router = express.Router();
 
 router.get("/detail/:id", companyController.getCompany);
+router.get("/all", companyController.getCompannies);
 
 router.use(authRecruiterController.protect); // Protect all routes after this middleware
 

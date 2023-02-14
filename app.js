@@ -28,8 +28,8 @@ app.get("/", swaggerUI.setup(swaggerDocument));
 // 2) BADY PARSERS
 app.use(
   cors({
-    // origin: "http://localhost:3000",
-    origin: "https://final-year-project-job.netlify.app",
+    origin: "http://localhost:3000",
+    // origin: "https://final-year-project-job.netlify.app",
     credentials: true,
   })
 );

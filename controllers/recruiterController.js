@@ -28,7 +28,7 @@ exports.getRecruiterEduExp = factory.getOne(Recruiter, [
   "education",
   "experience",
 ]);
-exports.getRecruiterComJob = factory.getOne(Recruiter, ["company", "job"]);
+exports.getRecruiterComJob = factory.getOne(Recruiter, ["company"]);
 exports.updateRecruiter = factory.updateOne(Recruiter);
 
 //  ##################################

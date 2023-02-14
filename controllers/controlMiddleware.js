@@ -62,23 +62,42 @@ exports.getOne = (Model, popOptions) =>
 exports.getAll = (Model) =>
   catchAsync(async (req, res, next) => {
     // To allow for nested GET reviews on tour (hack)
-    let filter = {};
-    if (req.params.tourId) filter = { tour: req.params.tourId };
+    const counter = await Model.find().limit(1).count();
+    if (counter > 0) {
+      let filter = {};
 
-    const features = new APIFeatures(Model.find(filter), req.query)
-      .filter()
-      .sort()
-      .limitFields()
-      .paginate();
-    // const doc = await features.query.explain();
-    const doc = await features.query;
+      if (req.body.recruiter) filter = { recruiter: req.body.recruiter };
+      // if (req.body.jobs) filter = { recruiter: req.body.recruiter._id };
 
-    // SEND RESPONSE
-    res.status(200).json({
-      status: "success",
-      results: doc.length,
-      doc,
-    });
+      const features = new APIFeatures(
+        Model.find(filter),
+        Model,
+        req.query,
+        filter
+      )
+        .filter()
+        .limitFields()
+        .sort()
+        .paginate();
+      // if (popOptions) features.query = features.query.populate(popOptions);
+      const doc = await features.query;
+      // const doc = await Model.find(filter);
+
+      let totalPages = null;
+      if (req.query.page !== "null") {
+        const total = await Model.countDocuments({});
+        totalPages = Math.ceil(total / req.query.limit);
+      }
+
+      // SEND RESPONSE
+      res.status(200).json({
+        status: "success",
+        totalPages,
+        doc,
+      });
+    } else {
+      return next(new AppError("No document found with this query", 404));
+    }
   });
 
 exports.createBookmark = (personModel, jobModel, path) =>

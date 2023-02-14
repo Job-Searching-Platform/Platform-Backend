@@ -9,6 +9,7 @@ const uuid = require("uuid").v4;
 //     Recruiter Education
 // ###############################
 exports.getCompany = factory.getOne(recruiterCompany, "job");
+exports.getCompannies = factory.getAll(recruiterCompany);
 exports.createCompany = factory.createOne(recruiterCompany);
 exports.updateCompany = factory.updateOne(recruiterCompany);
 exports.deleteCompany = factory.deleteOne(recruiterCompany);

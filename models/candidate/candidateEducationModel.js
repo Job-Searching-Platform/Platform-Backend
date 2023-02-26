@@ -1,10 +1,10 @@
 const mongoose = require("mongoose");
 
-const userEducationSchema = new mongoose.Schema({
+const candidateEducationSchema = new mongoose.Schema({
   profile: {
     type: mongoose.Schema.ObjectId,
-    ref: "User",
-    required: [true, "Education must belong to a User!"],
+    ref: "Candidate",
+    required: [true, "Education must belong to a Candidate!"],
   },
   __v: { type: Number, select: false },
   school: String,
@@ -16,7 +16,7 @@ const userEducationSchema = new mongoose.Schema({
 
 const Education = mongoose.model(
   "Education",
-  userEducationSchema,
+  candidateEducationSchema,
   "userEducation"
 );
 

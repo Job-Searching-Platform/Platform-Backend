@@ -2,7 +2,7 @@ const crypto = require("crypto");
 const { promisify } = require("util");
 const jwt = require("jsonwebtoken");
 const { OAuth2Client } = require("google-auth-library");
-const User = require("./../models/user/userModel");
+const Candidate = require("./../models/candidate/candidateModel");
 const catchAsync = require("./../utils/catchAsync");
 const AppError = require("./../utils/appError");
 const Email = require("./../utils/email");
@@ -16,8 +16,8 @@ const signToken = (id) => {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 };
-const createSendToken = (user, statusCode, req, res) => {
-  const token = signToken(user._id);
+const createSendToken = (candidate, statusCode, req, res) => {
+  const token = signToken(candidate._id);
   const expiry = new Date(
     Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
   );
@@ -28,12 +28,12 @@ const createSendToken = (user, statusCode, req, res) => {
   });
 
   // Remove password from output
-  user.password = expiry;
+  candidate.password = expiry;
 
   res.status(statusCode).json({
     status: "success",
     token,
-    user,
+    candidate,
   });
 };
 
@@ -42,7 +42,7 @@ const createSendToken = (user, statusCode, req, res) => {
 // ##########################
 
 exports.signup = catchAsync(async (req, res, next) => {
-  const newUser = await User.create({
+  const newUser = await Candidate.create({
     fullName: req.body.fullName,
     email: req.body.email,
     password: req.body.password,
@@ -65,15 +65,18 @@ exports.login = catchAsync(async (req, res, next) => {
   if (!email || !password) {
     return next(new AppError("Please provide email and password!", 400));
   }
-  // 2) Check if user exists && password is correct
-  const user = await User.findOne({ email }).select("+password");
+  // 2) Check if candidate exists && password is correct
+  const candidate = await Candidate.findOne({ email }).select("+password");
 
-  if (!user || !(await user.correctPassword(password, user.password))) {
+  if (
+    !candidate ||
+    !(await candidate.correctPassword(password, candidate.password))
+  ) {
     return next(new AppError("Incorrect email or password", 401));
   }
 
   // 3) If everything ok, send token to client
-  createSendToken(user, 200, req, res);
+  createSendToken(candidate, 200, req, res);
 });
 
 // ##########################
@@ -111,27 +114,30 @@ exports.protect = catchAsync(async (req, res, next) => {
   // 2) Verification token
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
-  // 3) Check if user still exists
-  const currentUser = await User.findById(decoded.id);
+  // 3) Check if candidate still exists
+  const currentUser = await Candidate.findById(decoded.id);
   if (!currentUser) {
     return next(
       new AppError(
-        "The user belonging to this token does no longer exist.",
+        "The candidate belonging to this token does no longer exist.",
         401
       )
     );
   }
 
-  // 4) Check if user changed password after the token was issued
+  // 4) Check if candidate changed password after the token was issued
   if (currentUser.changedPasswordAfter(decoded.iat)) {
     return next(
-      new AppError("User recently changed password! Please log in again.", 401)
+      new AppError(
+        "Candidate recently changed password! Please log in again.",
+        401
+      )
     );
   }
 
   // GRANT ACCESS TO PROTECTED ROUTE
-  req.user = currentUser;
-  res.locals.user = currentUser;
+  req.candidate = currentUser;
+  res.locals.candidate = currentUser;
   next();
 });
 
@@ -148,19 +154,19 @@ exports.isLoggedIn = async (req, res, next) => {
         process.env.JWT_SECRET
       );
 
-      // 2) Check if user still exists
-      const currentUser = await User.findById(decoded.id);
+      // 2) Check if candidate still exists
+      const currentUser = await Candidate.findById(decoded.id);
       if (!currentUser) {
         return next();
       }
 
-      // 3) Check if user changed password after the token was issued
+      // 3) Check if candidate changed password after the token was issued
       if (currentUser.changedPasswordAfter(decoded.iat)) {
         return next();
       }
 
       // THERE IS A LOGGED IN USER
-      res.locals.user = currentUser;
+      res.locals.candidate = currentUser;
       return next();
     } catch (err) {
       return next();
@@ -174,8 +180,8 @@ exports.isLoggedIn = async (req, res, next) => {
 // ###################################
 // exports.restrictTo = (...roles) => {
 //   return (req, res, next) => {
-//     // roles ['admin', 'lead-guide']. role='user'
-//     if (!roles.includes(req.user.role)) {
+//     // roles ['admin', 'lead-guide']. role='candidate'
+//     if (!roles.includes(req.candidate.role)) {
 //       return next(
 //         new AppError("You do not have permission to perform this action", 403)
 //       );
@@ -189,31 +195,31 @@ exports.isLoggedIn = async (req, res, next) => {
 //       Forgot Password
 // ###################################
 exports.forgotPassword = catchAsync(async (req, res, next) => {
-  // 1) Get user based on POSTed email
-  const user = await User.findOne({ email: req.body.email });
-  if (!user) {
-    return next(new AppError("There is no user with email address.", 404));
+  // 1) Get candidate based on POSTed email
+  const candidate = await Candidate.findOne({ email: req.body.email });
+  if (!candidate) {
+    return next(new AppError("There is no candidate with email address.", 404));
   }
 
   // 2) Generate the random reset token
-  const resetToken = user.createPasswordResetToken();
-  await user.save({ validateBeforeSave: false });
+  const resetToken = candidate.createPasswordResetToken();
+  await candidate.save({ validateBeforeSave: false });
 
-  // 3) Send it to user's email
+  // 3) Send it to candidate's email
   try {
     const resetURL = `${req.protocol}://${req.get(
       "host"
     )}/users/resetPassword/${resetToken}`;
-    await new Email(user, resetURL).sendPasswordReset();
+    await new Email(candidate, resetURL).sendPasswordReset();
 
     res.status(200).json({
       status: "success",
       message: "Token sent to email!",
     });
   } catch (err) {
-    user.passwordResetToken = undefined;
-    user.passwordResetExpires = undefined;
-    await user.save({ validateBeforeSave: false });
+    candidate.passwordResetToken = undefined;
+    candidate.passwordResetExpires = undefined;
+    await candidate.save({ validateBeforeSave: false });
 
     return next(
       new AppError("There was an error sending the email. Try again later!"),
@@ -226,52 +232,59 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
 //       Reset Password
 // ###################################
 exports.resetPassword = catchAsync(async (req, res, next) => {
-  // 1) Get user based on the token
+  // 1) Get candidate based on the token
   const hashedToken = crypto
     .createHash("sha256")
     .update(req.params.token)
     .digest("hex");
 
-  const user = await User.findOne({
+  const candidate = await Candidate.findOne({
     passwordResetToken: hashedToken,
     passwordResetExpires: { $gt: Date.now() },
   });
 
-  // 2) If token has not expired, and there is user, set the new password
-  if (!user) {
+  // 2) If token has not expired, and there is candidate, set the new password
+  if (!candidate) {
     return next(new AppError("Token is invalid or has expired", 400));
   }
-  user.password = req.body.password;
-  user.passwordConfirm = req.body.passwordConfirm;
-  user.passwordResetToken = undefined;
-  user.passwordResetExpires = undefined;
-  await user.save();
+  candidate.password = req.body.password;
+  candidate.passwordConfirm = req.body.passwordConfirm;
+  candidate.passwordResetToken = undefined;
+  candidate.passwordResetExpires = undefined;
+  await candidate.save();
 
-  // 3) Update changedPasswordAt property for the user
-  // 4) Log the user in, send JWT
-  createSendToken(user, 200, req, res);
+  // 3) Update changedPasswordAt property for the candidate
+  // 4) Log the candidate in, send JWT
+  createSendToken(candidate, 200, req, res);
 });
 
 // ##################################
 //       Update Password
 // ###################################
 exports.updatePassword = catchAsync(async (req, res, next) => {
-  // 1) Get user from collection
-  const user = await User.findById(req.user.id).select("+password");
+  // 1) Get candidate from collection
+  const candidate = await Candidate.findById(req.candidate.id).select(
+    "+password"
+  );
 
   // 2) Check if POSTed current password is correct
-  if (!(await user.correctPassword(req.body.passwordCurrent, user.password))) {
+  if (
+    !(await candidate.correctPassword(
+      req.body.passwordCurrent,
+      candidate.password
+    ))
+  ) {
     return next(new AppError("Your current password is wrong.", 401));
   }
 
   // 3) If so, update password
-  user.password = req.body.password;
-  user.passwordConfirm = req.body.passwordConfirm;
-  await user.save();
-  // User.findByIdAndUpdate will NOT work as intended!
+  candidate.password = req.body.password;
+  candidate.passwordConfirm = req.body.passwordConfirm;
+  await candidate.save();
+  // Candidate.findByIdAndUpdate will NOT work as intended!
 
-  // 4) Log user in, send JWT
-  createSendToken(user, 200, req, res);
+  // 4) Log candidate in, send JWT
+  createSendToken(candidate, 200, req, res);
 });
 
 // ##################################
@@ -286,23 +299,23 @@ exports.googleLogin = (req, res) => {
     .then((response) => {
       const { email_verified, name, email } = response.payload;
       if (email_verified) {
-        User.findOne({ email }).exec((err, user) => {
-          if (user) {
-            createSendToken(user, 200, req, res);
+        Candidate.findOne({ email }).exec((err, candidate) => {
+          if (candidate) {
+            createSendToken(candidate, 200, req, res);
           } else {
             let password = email + process.env.JWT_SECRET;
 
-            user = new User({
+            candidate = new Candidate({
               email,
               password,
               confirmPassword: password,
               fullName: name,
             });
-            user.save((err, data) => {
+            candidate.save((err, data) => {
               if (err) {
                 console.log("ERROR GOOGLE LOGIN ON USER SAVE", err);
                 return res.status(400).json({
-                  error: "User signup failed with google",
+                  error: "Candidate signup failed with google",
                 });
               }
               createSendToken(data, 200, req, res);
@@ -334,17 +347,17 @@ exports.facebookLogin = (req, res) => {
       // .then(response => console.log(response))
       .then((response) => {
         const { email, name } = response;
-        User.findOne({ email }).exec((err, user) => {
-          if (user) {
-            createSendToken(user, 200, req, res);
+        Candidate.findOne({ email }).exec((err, candidate) => {
+          if (candidate) {
+            createSendToken(candidate, 200, req, res);
           } else {
             let password = email + process.env.JWT_SECRET;
-            user = new User({ name, email, password });
-            user.save((err, data) => {
+            candidate = new Candidate({ name, email, password });
+            candidate.save((err, data) => {
               if (err) {
                 console.log("ERROR FACEBOOK LOGIN ON USER SAVE", err);
                 return res.status(400).json({
-                  error: "User signup failed with facebook",
+                  error: "Candidate signup failed with facebook",
                 });
               }
               createSendToken(data, 200, req, res);

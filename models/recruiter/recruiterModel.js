@@ -35,7 +35,7 @@ const recruiterSchema = new mongoose.Schema(
     // bookmarkedCandidates: [
     //   {
     //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'User',
+    //     ref: 'Candidate',
     //   },
     // ],
     

@@ -1,5 +1,5 @@
 const Recruiter = require("./../models/recruiter/recruiterModel");
-const User = require("./../models/user/userModel");
+const Candidate = require("./../models/candidate/candidateModel");
 const recruiterEducation = require("../models/recruiter/recruiterEducationModel");
 const recruiterExperience = require("./../models/recruiter/recruiterExperienceModel");
 const recruiterCompany = require("./../models/recruiter/companyModel");
@@ -34,7 +34,7 @@ exports.updateRecruiter = factory.updateOne(Recruiter);
 //  ##################################
 //            Bookmark
 //  ##################################
-exports.createBookmark = factory.createBookmark(Recruiter, User);
+exports.createBookmark = factory.createBookmark(Recruiter, Candidate);
 exports.deleteBookmark = factory.deleteBookmark(Recruiter, "recruiter");
 exports.getBookmark = factory.getBookmark(Recruiter, "bookmarkedCandidates");
 
@@ -130,3 +130,21 @@ exports.resume_upload = catchAsync(async (req, res, next) => {
 //   req.params.id = req.recruiter.id;
 //   next();
 // };
+
+// Get bookmarked candidates also uncomment the bookmark for recruitermodel
+// router.post('/bookmark/:id', auth, async (req, res) => {
+//   try {
+//     const recruiter = await Recruiter.findById(req.user._id);
+//     const candidate = await Candidate.findById(req.params.id);
+//     const isBookmarked = recruiter.bookmarkedCandidates.includes(candidate._id);
+//     if (isBookmarked) {
+//       recruiter.bookmarkedCandidates = recruiter.bookmarkedCandidates.filter(c => c !== candidate._id);
+//     } else {
+//       recruiter.bookmarkedCandidates.push(candidate._id);
+//     }
+//     await recruiter.save();
+//     res.send(recruiter);
+//   } catch (error) {
+//     res.status(400).send(error);
+//   }
+// });

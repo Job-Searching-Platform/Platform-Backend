@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
 
-const userSchema = new mongoose.Schema(
+const candidateSchema = new mongoose.Schema(
   {
     fullName: {
       type: String,
@@ -32,12 +32,12 @@ const userSchema = new mongoose.Schema(
         message: "Passwords are not the same!",
       },
     },
-    // bookmarkedJobs: [
-    //   {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'Job',
-    //   },
-    // ],
+    bookmarkedJobs: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Job",
+      },
+    ],
     // bookmarkedBy: [
     //   {
     //     type: mongoose.Schema.Types.ObjectId,
@@ -90,20 +90,20 @@ const userSchema = new mongoose.Schema(
 );
 
 // Virtual populate
-userSchema.virtual("education", {
+candidateSchema.virtual("education", {
   ref: "Education",
   foreignField: "profile",
   localField: "_id",
 });
 
 // Virtual populate
-userSchema.virtual("experience", {
+candidateSchema.virtual("experience", {
   ref: "Experience",
   foreignField: "profile",
   localField: "_id",
 });
 
-userSchema.pre("save", async function (next) {
+candidateSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
     return next();
   }
@@ -114,7 +114,7 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-userSchema.pre("save", function (next) {
+candidateSchema.pre("save", function (next) {
   if (!this.isModified("password") || this.isNew) {
     return next();
   }
@@ -122,19 +122,19 @@ userSchema.pre("save", function (next) {
   next();
 });
 
-userSchema.pre(/^find/, function (next) {
+candidateSchema.pre(/^find/, function (next) {
   this.find({ active: { $ne: false } });
   next();
 });
 
-userSchema.methods.correctPassword = async function (
+candidateSchema.methods.correctPassword = async function (
   candidatePassword,
-  userPassword
+  candidatePassword
 ) {
-  return await bcrypt.compare(candidatePassword, userPassword);
+  return await bcrypt.compare(candidatePassword, candidatePassword);
 };
 
-userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
+candidateSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
   if (this.passwordChangedAt) {
     const changedTimestamp = parseInt(
       this.passwordChangedAt.getTime() / 1000,
@@ -145,7 +145,7 @@ userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
   return false;
 };
 
-userSchema.methods.createPasswordResetToken = function () {
+candidateSchema.methods.createPasswordResetToken = function () {
   const resetToken = crypto.randomBytes(32).toString("hex");
 
   this.passwordResetToken = crypto
@@ -158,6 +158,6 @@ userSchema.methods.createPasswordResetToken = function () {
   return resetToken;
 };
 
-const User = mongoose.model("User", userSchema, "userAdmin");
+const Candidate = mongoose.model("Candidate", candidateSchema, "userAdmin");
 
-module.exports = User;
+module.exports = Candidate;

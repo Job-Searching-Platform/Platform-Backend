@@ -1,5 +1,5 @@
 const jobCompany = require("./../models/recruiter/jobModel");
-const User = require("../models/user/userModel");
+const Candidate = require("../models/candidate/candidateModel");
 const catchAsync = require("./../utils/catchAsync");
 const AppError = require("./../utils/appError");
 const factory = require("./controlMiddleware");
@@ -17,11 +17,11 @@ exports.deleteJob = factory.deleteOne(jobCompany);
 
 exports.getJobApplicants = catchAsync(async (req, res) => {
   const jobPosting = await jobCompany
-    .findById(req.params.id)
+    .findById(req.params.jobId)
     .populate("applications");
 
   const candidateIds = jobPosting.applications.map((app) => app.candidate);
-  const doc = await User.find({
+  const doc = await Candidate.find({
     _id: { $in: candidateIds },
   });
 

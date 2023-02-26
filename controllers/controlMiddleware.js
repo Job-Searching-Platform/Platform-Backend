@@ -66,8 +66,8 @@ exports.getAll = (Model) =>
     if (counter > 0) {
       let filter = {};
 
-      if (req.body.recruiter) filter = { recruiter: req.body.recruiter };
-      // if (req.body.jobs) filter = { recruiter: req.body.recruiter._id };
+      if (req.params.recruiterID)
+        filter = { recruiter: req.params.recruiterID };
 
       const features = new APIFeatures(
         Model.find(filter),
@@ -79,9 +79,7 @@ exports.getAll = (Model) =>
         .limitFields()
         .sort()
         .paginate();
-      // if (popOptions) features.query = features.query.populate(popOptions);
       const doc = await features.query;
-      // const doc = await Model.find(filter);
 
       let totalPages = null;
       if (req.query.page !== "null") {
@@ -102,9 +100,10 @@ exports.getAll = (Model) =>
 
 exports.createBookmark = (personModel, jobModel, path) =>
   catchAsync(async (req, res) => {
-    const doc = await personModel.findById(req.user._id);
-    const job = await jobModel.findById(req.params.id);
-    if (path === "user") {
+    const doc = await personModel.findById(req.params.candidateID);
+    const job = await jobModel.findById(req.params.jobID);
+    console.log(doc.bookmarkedJobs.includes(job._id));
+    if (path === "candidate") {
       const isBookmarked = doc.bookmarkedJobs.includes(job._id);
       if (isBookmarked) {
         doc.bookmarkedJobs = doc.bookmarkedJobs.filter((j) => j !== job._id);
@@ -130,14 +129,14 @@ exports.createBookmark = (personModel, jobModel, path) =>
   });
 exports.deleteBookmark = (personModel, path) =>
   catchAsync(async (req, res) => {
-    const doc = await personModel.findById(req.user._id);
-    if (path === "user") {
+    const doc = await personModel.findById(req.params.candidateID);
+    if (path === "candidate") {
       doc.bookmarkedJobs = doc.bookmarkedJobs.filter(
-        (j) => j !== req.params.id
+        (j) => j !== req.params.jobID
       );
     } else {
       doc.bookmarkedCandidates = doc.bookmarkedCandidates.filter(
-        (j) => j !== req.params.id
+        (j) => j !== req.params.jobID
       );
     }
     await doc.save();
@@ -150,7 +149,7 @@ exports.deleteBookmark = (personModel, path) =>
 
 exports.getBookmark = (personModel, popOptions) =>
   catchAsync(async (req, res) => {
-    let query = await personModel.findById(req.user._id);
+    let query = await personModel.findById(req.params.candidateID);
     if (popOptions) query = query.populate(popOptions);
     const doc = await query;
 

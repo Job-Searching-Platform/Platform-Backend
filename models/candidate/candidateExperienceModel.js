@@ -1,10 +1,10 @@
 const mongoose = require("mongoose");
 
-const userExperienceSchema = new mongoose.Schema({
+const candidateExperienceSchema = new mongoose.Schema({
   profile: {
     type: mongoose.Schema.ObjectId,
-    ref: "User",
-    required: [true, "Experience must belong to a User!"],
+    ref: "Candidate",
+    required: [true, "Experience must belong to a Candidate!"],
   },
   __v: { type: Number, select: false },
   company: String,
@@ -17,7 +17,7 @@ const userExperienceSchema = new mongoose.Schema({
  
 const Experience = mongoose.model(
   "Experience",
-  userExperienceSchema,
+  candidateExperienceSchema,
   "userExperience"
 );
 

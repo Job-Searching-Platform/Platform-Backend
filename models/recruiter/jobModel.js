@@ -11,10 +11,10 @@ const JobSchema = new mongoose.Schema({
     ref: "Recruiter",
     required: [true, "Job must belong to a Recruiter!"],
   },
-  // bookmarked: {
-  //   type: Boolean,
-  //   default: false,
-  // },
+  bookmarked: {
+    type: Boolean,
+    default: false,
+  },
 
   applications: [
     {

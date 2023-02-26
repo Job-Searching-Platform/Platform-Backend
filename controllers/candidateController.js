@@ -1,14 +1,12 @@
-const User = require("./../models/user/userModel");
-const Job = require("./../models/recruiter/jobModel");
-const userEducation = require("../models/user/userEducationModel");
-const Application = require("../models/user/jobApplication");
-const userExperience = require("./../models/user/userExperienceModel");
-const catchAsync = require("./../utils/catchAsync");
-const AppError = require("./../utils/appError");
+const Candidate = require("../models/candidate/candidateModel");
+const Job = require("../models/recruiter/jobModel");
+const candidateEducation = require("../models/candidate/candidateEducationModel");
+const Application = require("../models/candidate/jobApplicationModel");
+const candidateExperience = require("../models/candidate/candidateExperienceModel");
+const catchAsync = require("../utils/catchAsync");
 const factory = require("./controlMiddleware");
 const AWS = require("aws-sdk");
 const uuid = require("uuid").v4;
-const mongoose = require("mongoose");
 
 // ###############################
 //     Middleware
@@ -22,37 +20,39 @@ const mongoose = require("mongoose");
 // };
 
 // ###############################
-//     User Name
+//     Candidate Name
 // ###############################
-exports.getUser = factory.getOne(User);
-exports.getUserEduExp = factory.getOne(User, ["education", "experience"]);
-exports.updateUser = factory.updateOne(User);
-exports.createBookmark = factory.createBookmark(User, Job);
-exports.deleteBookmark = factory.deleteBookmark(User, "user");
-exports.getBookmark = factory.getBookmark(User, "bookmarkedJobs");
-// ###############################
-//     User Experience
-// ###############################
-exports.getUserExperience = factory.getOne(userExperience);
-exports.createUserExperience = factory.createOne(userExperience);
-exports.updateUserExperience = factory.updateOne(userExperience);
-exports.deleteUserExperience = factory.deleteOne(userExperience);
+exports.getCandidate = factory.getOne(Candidate);
+exports.getAllCandidates = factory.getAll(Candidate);
+exports.getCandidateEduExp = factory.getOne(Candidate, ["education", "experience"]);
+exports.updateCandidate = factory.updateOne(Candidate);
+exports.createBookmark = factory.createBookmark(Candidate, Job, "candidate");
+exports.deleteBookmark = factory.deleteBookmark(Candidate, "candidate");
+exports.getBookmark = factory.getBookmark(Candidate, "bookmarkedJobs");
 
 // ###############################
-//     User Education
+//     Candidate Experience
 // ###############################
-exports.getUserEducation = factory.getOne(userEducation);
-exports.createUserEducation = factory.createOne(userEducation);
-exports.updateUserEducation = factory.updateOne(userEducation);
-exports.deleteUserEducation = factory.deleteOne(userEducation);
+exports.getCandidateExperience = factory.getOne(candidateExperience);
+exports.createCandidateExperience = factory.createOne(candidateExperience);
+exports.updateCandidateExperience = factory.updateOne(candidateExperience);
+exports.deleteCandidateExperience = factory.deleteOne(candidateExperience);
+
+// ###############################
+//     Candidate Education
+// ###############################
+exports.getCandidateEducation = factory.getOne(candidateEducation);
+exports.createCandidateEducation = factory.createOne(candidateEducation);
+exports.updateCandidateEducation = factory.updateOne(candidateEducation);
+exports.deleteCandidateEducation = factory.deleteOne(candidateEducation);
 
 // ####################################################
 //           Apply to Jobs
 // ####################################################
 exports.applyJob = catchAsync(async (req, res) => {
-  // console.log(req.body.user._id);
-  const candidate = await User.findById(req.body.user._id);
-  const jobPosting = await Job.findById(req.params.id);
+  // console.log(req.body.candidate._id);
+  const candidate = await Candidate.findById(req.params.candidateID);
+  const jobPosting = await Job.findById(req.params.jobID);
 
   const existingApplication = await Application.findOne({
     candidate: candidate._id,
@@ -90,7 +90,7 @@ exports.applyJob = catchAsync(async (req, res) => {
 //     Get Applied Jobs List
 // ###############################
 exports.getAppliedJobs = catchAsync(async (req, res) => {
-  const candidate = await User.findById(req.params.id).populate({
+  const candidate = await Candidate.findById(req.params.candidateID).populate({
     path: "applications",
     populate: { path: "jobPosting" },
   });
@@ -104,10 +104,10 @@ exports.getAppliedJobs = catchAsync(async (req, res) => {
 });
 
 // ###############################
-//     Delete user account
+//     Delete candidate account
 // ###############################
 exports.deleteMe = catchAsync(async (req, res) => {
-  await User.findByIdAndUpdate(req.params.id, { active: false });
+  await Candidate.findByIdAndUpdate(req.params.id, { active: false });
 
   res.status(204).json({
     status: "success",
@@ -175,6 +175,6 @@ exports.resume_upload = catchAsync(async (req, res, next) => {
 //     Middleware
 // ###############################
 // exports.getMe = (req, res, next) => {
-//   req.params.id = req.user.id;
+//   req.params.id = req.candidate.id;
 //   next();
 // };

@@ -16,7 +16,6 @@ const candidateRouter = require("./routes/candidateRoutes");
 const recruiterRouter = require("./routes/recruiterRoutes");
 const companyRouter = require("./routes/companyRoutes");
 const jobRouter = require("./routes/jobDetailRoutes");
-const uploadRouter = require("./routes/uploadRoutes");
 const ChatRoute = require("./routes/chatRoutes");
 const MessageRoute = require("./routes/messageRoutes");
 
@@ -53,7 +52,6 @@ app.use("/api/v1/candidates", candidateRouter);
 app.use("/api/v1/recruiters", recruiterRouter);
 app.use("/api/v1/company", companyRouter);
 app.use("/api/v1/job", jobRouter);
-app.use("/api/v1/upload", uploadRouter);
 app.use("/api/v1/chat", ChatRoute);
 app.use("/api/v1/message", MessageRoute);
 

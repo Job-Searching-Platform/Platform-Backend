@@ -60,6 +60,7 @@ exports.signup = catchAsync(async (req, res, next) => {
 // ##########################
 exports.login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
+  console.log(req.body);
 
   // 1) Check if email and password exist
   if (!email || !password) {
@@ -67,7 +68,7 @@ exports.login = catchAsync(async (req, res, next) => {
   }
   // 2) Check if candidate exists && password is correct
   const candidate = await Candidate.findOne({ email }).select("+password");
-
+  console.log(candidate.password, password);
   if (
     !candidate ||
     !(await candidate.correctPassword(password, candidate.password))

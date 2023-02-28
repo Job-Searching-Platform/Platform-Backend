@@ -1,50 +1,28 @@
 const Candidate = require("../models/candidate/candidateModel");
-const Job = require("../models/recruiter/jobModel");
-const candidateEducation = require("../models/candidate/candidateEducationModel");
+const Job = require("../models/job_company/jobModel");
 const Application = require("../models/candidate/jobApplicationModel");
-const candidateExperience = require("../models/candidate/candidateExperienceModel");
 const catchAsync = require("../utils/catchAsync");
 const factory = require("./controlMiddleware");
-const AWS = require("aws-sdk");
-const uuid = require("uuid").v4;
 
 // ###############################
-//     Middleware
-// ###############################
-// const filterObj = (obj, ...allowedFields) => {
-//   const newObj = {};
-//   Object.keys(obj).forEach((el) => {
-//     if (allowedFields.includes(el)) newObj[el] = obj[el];
-//   });
-//   return newObj;
-// };
-
-// ###############################
-//     Candidate Name
+//     Candidate Profile Info
 // ###############################
 exports.getCandidate = factory.getOne(Candidate);
 exports.getAllCandidates = factory.getAll(Candidate);
-exports.getCandidateEduExp = factory.getOne(Candidate, ["education", "experience"]);
+exports.deleteCandidate = factory.deleteMe(Candidate);
 exports.updateCandidate = factory.updateOne(Candidate);
+
+// ####################################################
+//           Bookmark Job
+// ####################################################
 exports.createBookmark = factory.createBookmark(Candidate, Job, "candidate");
 exports.deleteBookmark = factory.deleteBookmark(Candidate, "candidate");
 exports.getBookmark = factory.getBookmark(Candidate, "bookmarkedJobs");
 
-// ###############################
-//     Candidate Experience
-// ###############################
-exports.getCandidateExperience = factory.getOne(candidateExperience);
-exports.createCandidateExperience = factory.createOne(candidateExperience);
-exports.updateCandidateExperience = factory.updateOne(candidateExperience);
-exports.deleteCandidateExperience = factory.deleteOne(candidateExperience);
-
-// ###############################
-//     Candidate Education
-// ###############################
-exports.getCandidateEducation = factory.getOne(candidateEducation);
-exports.createCandidateEducation = factory.createOne(candidateEducation);
-exports.updateCandidateEducation = factory.updateOne(candidateEducation);
-exports.deleteCandidateEducation = factory.deleteOne(candidateEducation);
+// #############################################
+//     AWS for Resume & Media upload
+// #############################################
+exports.mediaUploader = factory.mediaUploader();
 
 // ####################################################
 //           Apply to Jobs
@@ -102,79 +80,3 @@ exports.getAppliedJobs = catchAsync(async (req, res) => {
     doc: result,
   });
 });
-
-// ###############################
-//     Delete candidate account
-// ###############################
-exports.deleteMe = catchAsync(async (req, res) => {
-  await Candidate.findByIdAndUpdate(req.params.id, { active: false });
-
-  res.status(204).json({
-    status: "success",
-    data: null,
-  });
-});
-
-// ###############################
-//     AWS for Media upload
-// ###############################
-exports.media_upload = catchAsync(async (req, res, next) => {
-  const accessKeyId = `${process.env.AccessKeyID}`;
-  const secretAccessKey = `${process.env.SecretAccessKey}`;
-
-  const s3 = new AWS.S3({
-    accessKeyId,
-    secretAccessKey,
-    region: "ap-south-1",
-    apiVersion: "2010-12-01",
-    signatureVersion: "v4",
-  });
-
-  const key = `${req.cookies.jwt.substr(1, 13)}/${uuid()}.jpeg`;
-  s3.getSignedUrl(
-    "putObject",
-    {
-      Bucket: "my-blog-bucket-closest-1029",
-      ContentType: "image/jpeg",
-      Key: key,
-      Expires: 1000,
-    },
-    (err, url) => res.send({ key, url })
-  );
-});
-
-// ###############################
-//     AWS for Resume upload
-// ###############################
-exports.resume_upload = catchAsync(async (req, res, next) => {
-  const accessKeyId = `${process.env.AccessKeyID}`;
-  const secretAccessKey = `${process.env.SecretAccessKey}`;
-
-  const s3 = new AWS.S3({
-    accessKeyId,
-    secretAccessKey,
-    region: "ap-south-1",
-    apiVersion: "2010-12-01",
-    signatureVersion: "v4",
-  });
-
-  const key = `${req.cookies.jwt.substr(1, 13)}/${uuid()}.pdf`;
-  s3.getSignedUrl(
-    "putObject",
-    {
-      Bucket: "my-blog-bucket-closest-1029",
-      ContentType: "application/pdf",
-      Key: key,
-      Expires: 1000,
-    },
-    (err, url) => res.send({ key, url })
-  );
-});
-
-// ###############################
-//     Middleware
-// ###############################
-// exports.getMe = (req, res, next) => {
-//   req.params.id = req.candidate.id;
-//   next();
-// };

@@ -1,4 +1,4 @@
-const ChatModel = require("./../models/recruiter/chatModel");
+const ChatModel = require("./../models/chat/chatModel");
 
 exports.createChat = async (req, res) => {
   const newChat = new ChatModel({
@@ -34,7 +34,7 @@ exports.findChat = async (req, res) => {
   }
 };
 
-// const Chat = require("./../models/recruiter/chatModel");
+// const Chat = require("./../models/chat/chatModel");
 // const io = require("./../app");
 
 // // get all the chat between recruiter and candidate

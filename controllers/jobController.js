@@ -1,4 +1,4 @@
-const jobCompany = require("./../models/recruiter/jobModel");
+const jobCompany = require("./../models/job_company/jobModel");
 const Candidate = require("../models/candidate/candidateModel");
 const catchAsync = require("./../utils/catchAsync");
 const AppError = require("./../utils/appError");

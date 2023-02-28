@@ -4,9 +4,7 @@ const authRecruiterController = require("./../controllers/authRecruiterControlle
 
 const router = express.Router();
 
-// #############################
-//     Authentication
-// #############################
+// #########     Recruiter Authentication     #################
 router.post("/signup", authRecruiterController.signup);
 router.post("/login", authRecruiterController.login);
 router.get("/logout", authRecruiterController.logout);
@@ -14,41 +12,30 @@ router.post("/forgotPassword", authRecruiterController.forgotPassword);
 router.patch("/resetPassword/:token", authRecruiterController.resetPassword);
 router.post("/google-login", authRecruiterController.googleLogin);
 router.post("/facebook-login", authRecruiterController.facebookLogin);
-// #############################
-//    Recruiter Account Info
-// #############################
+
 router.use(authRecruiterController.protect); // Protect all routes after this middleware
 
 router.patch("/updateMyPassword", authRecruiterController.updatePassword);
 
-// #########     Recruiter Name     #################
+// #########    Recruiter Account Info    #################
 router
-  .route("/myProfile/:id")
+  .route("/profile/:id")
   .get(recruiterController.getRecruiter)
   .patch(recruiterController.updateRecruiter);
-router.delete("/deleteMe/:id", recruiterController.deleteMe);
-router.get("/eduexp/:id", recruiterController.getRecruiterEduExp);
-router.get("/comjob/:id", recruiterController.getRecruiterComJob);
+router.delete("/deleteMe/:id", recruiterController.deleteRecruiter);
 
-// #########     Recruiter Experience     #################
+// #########    Bookmark Recruiter     #################
 router
-  .route("/myExperience/:id")
-  .get(recruiterController.getRecruiterExperience)
-  .patch(recruiterController.updateRecruiterExperience)
-  .delete(recruiterController.deleteRecruiterExperience);
-router.post("/myExperience", recruiterController.createRecruiterExperience);
+  .route("/bookmark/:jobID?/:candidateID")
+  .delete(recruiterController.deleteBookmark)
+  .post(recruiterController.createBookmark)
+  .get(recruiterController.getBookmark);
+
+// #########    Recruiter Job & Company    #################
+router.get("/comjob/:id", recruiterController.getRecruiterComJob);
 router.get("/myCompany", recruiterController.getAllCompany);
 
-// #########     Recruiter Education     #################
-router
-  .route("/myEducation/:id")
-  .get(recruiterController.getRecruiterEducation)
-  .patch(recruiterController.updateRecruiterEducation)
-  .delete(recruiterController.deleteRecruiterEducation);
-router.post("/myEducation", recruiterController.createRecruiterEducation);
-
 // #########     Recruiter Media & Resume     #################
-router.get("/resumeUpload", recruiterController.resume_upload);
-router.get("/mediaUpload", recruiterController.media_upload);
+router.get("/resume-upload/:path/:type", recruiterController.mediaUploader);
 
 module.exports = router;

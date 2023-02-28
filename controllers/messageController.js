@@ -1,4 +1,4 @@
-const MessageModel = require("../models/recruiter/messageModel");
+const MessageModel = require("../models/job_company/messageModel");
 
 exports.addMessage = async (req, res) => {
   const { chatId, senderId, text } = req.body;

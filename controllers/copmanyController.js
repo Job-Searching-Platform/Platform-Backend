@@ -1,4 +1,4 @@
-const recruiterCompany = require("./../models/recruiter/companyModel");
+const recruiterCompany = require("./../models/job_company/companyModel");
 const catchAsync = require("./../utils/catchAsync");
 const AppError = require("./../utils/appError");
 const factory = require("./controlMiddleware");

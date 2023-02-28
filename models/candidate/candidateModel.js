@@ -3,6 +3,25 @@ const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
 
+// Define the experience schema
+const experienceSchema = new mongoose.Schema({
+  company: String,
+  title: String,
+  startDate: Date,
+  endDate: Date,
+  description: String,
+  tags: [String],
+});
+
+// Define the education schema
+const educationSchema = new mongoose.Schema({
+  school: String,
+  graduation: Date,
+  degree: String,
+  major: [String],
+  GPA: String,
+});
+
 const candidateSchema = new mongoose.Schema(
   {
     fullName: {
@@ -24,7 +43,6 @@ const candidateSchema = new mongoose.Schema(
     },
     confirmPassword: {
       type: String,
-      // required: [true, "Please confirm your password"],
       validate: {
         validator: function (el) {
           return el === this.password;
@@ -32,6 +50,9 @@ const candidateSchema = new mongoose.Schema(
         message: "Passwords are not the same!",
       },
     },
+
+    experiences: [experienceSchema],
+    education: [educationSchema],
     bookmarkedJobs: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -44,7 +65,10 @@ const candidateSchema = new mongoose.Schema(
     //     ref: 'Recruiter',
     //   },
     // ],
-
+    bookmarked: {
+      type: Boolean,
+      default: false,
+    },
     applications: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -89,20 +113,6 @@ const candidateSchema = new mongoose.Schema(
   }
 );
 
-// Virtual populate
-candidateSchema.virtual("education", {
-  ref: "Education",
-  foreignField: "profile",
-  localField: "_id",
-});
-
-// Virtual populate
-candidateSchema.virtual("experience", {
-  ref: "Experience",
-  foreignField: "profile",
-  localField: "_id",
-});
-
 candidateSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
     return next();
@@ -129,9 +139,9 @@ candidateSchema.pre(/^find/, function (next) {
 
 candidateSchema.methods.correctPassword = async function (
   candidatePassword,
-  candidatePassword
+  userPassword
 ) {
-  return await bcrypt.compare(candidatePassword, candidatePassword);
+  return await bcrypt.compare(candidatePassword, userPassword);
 };
 
 candidateSchema.methods.changedPasswordAfter = function (JWTTimestamp) {

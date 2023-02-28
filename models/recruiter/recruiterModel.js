@@ -3,6 +3,25 @@ const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
 
+// Define the experience schema
+const experienceSchema = new mongoose.Schema({
+  company: String,
+  title: String,
+  startDate: Date,
+  endDate: Date,
+  description: String,
+  tags: [String],
+});
+
+// Define the education schema
+const educationSchema = new mongoose.Schema({
+  school: String,
+  graduation: Date,
+  degree: String,
+  major: [String],
+  GPA: String,
+});
+
 const recruiterSchema = new mongoose.Schema(
   {
     fullName: {
@@ -22,9 +41,14 @@ const recruiterSchema = new mongoose.Schema(
       minlength: 8,
       select: false,
     },
+    bookmarkedCandidates: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Candidate",
+      },
+    ],
     passwordConfirm: {
       type: String,
-      required: [true, "Please confirm your password"],
       validate: {
         validator: function (el) {
           return el === this.password;
@@ -32,13 +56,9 @@ const recruiterSchema = new mongoose.Schema(
         message: "Passwords are not the same!",
       },
     },
-    // bookmarkedCandidates: [
-    //   {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'Candidate',
-    //   },
-    // ],
-    
+    experiences: [experienceSchema],
+    education: [educationSchema],
+
     __v: { type: Number, select: false },
     passwordChangedAt: Date,
     passwordResetToken: String,
@@ -75,20 +95,6 @@ const recruiterSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   }
 );
-
-// Virtual Education
-recruiterSchema.virtual("education", {
-  ref: "RecruiterEducation",
-  foreignField: "profile",
-  localField: "_id",
-});
-
-// Virtual Experience
-recruiterSchema.virtual("experience", {
-  ref: "RecruiterExperience",
-  foreignField: "profile",
-  localField: "_id",
-});
 
 // Virtual Job
 recruiterSchema.virtual("job", {

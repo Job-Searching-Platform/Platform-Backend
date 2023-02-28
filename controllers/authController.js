@@ -16,8 +16,8 @@ const signToken = (id) => {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 };
-const createSendToken = (candidate, statusCode, req, res) => {
-  const token = signToken(candidate._id);
+const createSendToken = (user, statusCode, req, res) => {
+  const token = signToken(user._id);
   const expiry = new Date(
     Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
   );
@@ -28,12 +28,12 @@ const createSendToken = (candidate, statusCode, req, res) => {
   });
 
   // Remove password from output
-  candidate.password = expiry;
+  user.password = expiry;
 
   res.status(statusCode).json({
     status: "success",
     token,
-    candidate,
+    user,
   });
 };
 

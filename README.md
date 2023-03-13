@@ -10,7 +10,7 @@
   <h3 align="center">Job Searching Platform</h3>
 
   <p align="center">
-    The University of Central Asia FYP by a student
+    The University of Central Asia Final Year Project by Abbosjon Madiev
     <br />
     <a href="https://fyp-backend-api.herokuapp.com"><strong>Visit the Website > </strong></a>
     <br />

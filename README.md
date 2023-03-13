@@ -12,7 +12,7 @@
   <p align="center">
     The University of Central Asia FYP by a student
     <br />
-    <a href="https://final-year-project-job.netlify.app/"><strong>Visit the Website > </strong></a>
+    <a href="https://fyp-backend-api.herokuapp.com"><strong>Visit the Website > </strong></a>
     <br />
     <br />
     ·

@@ -1,13 +1,13 @@
-const express = require("express");
-const {
-  addMessage,
-  getMessages,
-} = require("../controllers/MessageController.js");
+// const express = require("express");
+// const {
+//   addMessage,
+//   getMessages,
+// } = require("../controllers/MessageController.js");
 
-const router = express.Router();
+// const router = express.Router();
 
-router.post("/", addMessage);
+// router.post("/", addMessage);
 
-router.get("/:chatId", getMessages);
+// router.get("/:chatId", getMessages);
 
-module.exports = router;
+// module.exports = router;

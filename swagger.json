@@ -9,7 +9,7 @@
         "url": "https://opensource.org/licenses/MIT"
       }
     },
-    "apis": ["src/routes/*.js"],
+    "apis": ["routes/*.js"],
     "host": "https://fyp-backend-api.herokuapp.com",
     "basePath": "/api/v1",
     "tags": [

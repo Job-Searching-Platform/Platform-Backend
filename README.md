@@ -4,7 +4,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/YellowSpace-Magazine">
-    <img src="./src/assets/images/logo.png" alt="Logo" width="80" height="80">
+    <img src="./Logo.png" alt="Logo" width="80" height="80">
   </a>
 
   <h3 align="center">Job Searching Platform</h3>

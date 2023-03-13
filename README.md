@@ -3,7 +3,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/YellowSpace-Magazine">
+  <a href="https://github.com/Job-Searching-Platform">
     <img src="./Logo.png" alt="Logo" width="80" height="80">
   </a>
 
@@ -92,7 +92,7 @@ _Below You can find a detailed procedure you need to follow to get the programmi
 
 1. Clone the repo
    ```sh
-   git clone git@github.com:YellowSpace-Magazine/Frontend-React-APP.git
+   git clone git@github.com:Job-Searching-Platform/Platform-Backend.git
    ```
 2. Install NPM packages
    ```sh
@@ -100,7 +100,7 @@ _Below You can find a detailed procedure you need to follow to get the programmi
    ```
 3. Start the development server
    ```sh
-    npm start
+    npm run dev
    ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
